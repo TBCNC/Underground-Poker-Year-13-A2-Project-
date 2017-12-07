@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include "MenuStructure.h"
+#include "ScreenManagement.h"
+#include "TGUIEvents.h"
+#include "TGUIEventHandler.h"
 #pragma once
 namespace GameMenus {
 	enum MessageType : int {
@@ -64,11 +67,13 @@ namespace GameMenus {
 		okButton->setText("OK");
 		okButton->setFont(*font);
 		okButton->setTextSize(32);
+		okButton->connect("pressed", [&]() { TGUIEventHandler::events.push_back(TGUIEvents::MESSAGE_BOX_OK); });
 
 		msgBox.drawings_sfml.push_back(messageBox);
 		msgBox.drawings_sfml.push_back(titleText);
 		msgBox.drawings_sfml.push_back(messageText);
 		msgBox.drawings_tgui.push_back(okButton);
+
 
 		return msgBox;
 	}

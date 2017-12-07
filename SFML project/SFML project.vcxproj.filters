@@ -42,6 +42,9 @@
     <ClCompile Include="ScreenManagement.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="TGUIEventHandler.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -67,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="Background.h">
       <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="TGUIEvents.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="TGUIEventHandler.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

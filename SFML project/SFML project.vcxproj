@@ -23,6 +23,7 @@
     <ClCompile Include="Login.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ScreenManagement.cpp" />
+    <ClCompile Include="TGUIEventHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Network\Network.vcxproj">
@@ -38,6 +39,8 @@
     <ClInclude Include="MenuStructure.h" />
     <ClInclude Include="MessageBox.h" />
     <ClInclude Include="ScreenManagement.h" />
+    <ClInclude Include="TGUIEventHandler.h" />
+    <ClInclude Include="TGUIEvents.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

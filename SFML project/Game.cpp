@@ -14,13 +14,9 @@ void Game::Run() {
 	window.setFramerateLimit(60);
 	ScreenManagement screen_management(this->window, this->gui);
 	screen_management.menus.push_back(GameMenus::BackgroundImage(this->width, this->height));
-	screen_management.menus.push_back(GameMenus::MessageBox("This game is for 18+ only, faggots.",GameMenus::INFORMATION,GameMenus::OK,this->width,this->height));
+	screen_management.menus.push_back(GameMenus::MessageBox("This game is for 18+ only.",GameMenus::INFORMATION,GameMenus::OK,this->width,this->height));
 	screen_management.InitializeScreen();
 	while (window.isOpen()) {	
 		screen_management.UpdateScreen();
 	}
-}
-void Game::ManageEvent(sf::Event event) {
-	if (event.type == sf::Event::Closed)
-		this->window->close();
 }

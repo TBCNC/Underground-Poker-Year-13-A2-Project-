@@ -1,4 +1,6 @@
 #include "MenuStructure.h"
+#include "TGUIEvents.h"
+#include "TGUIEventHandler.h"
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <vector>
@@ -15,8 +17,10 @@ public:
 	void InitializeScreen();
 	void UpdateScreen();
 private:
+	void SFMLEventHandler(sf::Event event);
 	void DrawSFML();
 	void DrawTGUI();
+	void HandleTGUIEvents();
 	sf::RenderWindow *window_sfml;
 	tgui::Gui *window_tgui;
 };

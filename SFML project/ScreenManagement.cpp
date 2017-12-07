@@ -8,12 +8,30 @@ void ScreenManagement::InitializeScreen() {
 	this->window_tgui->removeAllWidgets();
 	this->DrawTGUI();
 }
+void ScreenManagement::HandleTGUIEvents()
+{
+	for(int c=0;c<TGUIEventHandler::events.size();c++)
+	{
+		switch(TGUIEventHandler::events.at(c))
+		{
+		case TGUIEvents::MESSAGE_BOX_OK:
+			int menuIndex= this->menus.size() - 1;
+			for(int i=0;i<this->menus.at(menuIndex).drawings_tgui.size();i++)
+			{
+				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(c));
+			}
+			this->menus.pop_back();//Remove the message box since it will be biggest.
+		}
+		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin()+c);
+	}
+}
 void ScreenManagement::UpdateScreen() {
 	//Event polling
 	sf::Event event;
 	while (this->window_sfml->pollEvent(event)) {
-		//Create an event manager class and place it here
 		this->window_tgui->handleEvent(event);
+		if(TGUIEventHandler::events.size()>0)
+			this->HandleTGUIEvents();
 	}
 	//Graphical drawing
 	this->window_sfml->clear();
