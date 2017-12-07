@@ -12,15 +12,25 @@ void ScreenManagement::HandleTGUIEvents()
 {
 	for(int c=0;c<TGUIEventHandler::events.size();c++)
 	{
+		int menuIndex = this->menus.size() - 1;
 		switch(TGUIEventHandler::events.at(c))
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
-			int menuIndex= this->menus.size() - 1;
+			//Parse a pointer to this function later
 			for(int i=0;i<this->menus.at(menuIndex).drawings_tgui.size();i++)
 			{
-				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(c));
+				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(i));
 			}
 			this->menus.pop_back();//Remove the message box since it will be biggest.
+			break;
+		case TGUIEvents::LOG_IN:{
+			//Log in here
+			for(int i=0;i<this->menus.at(menuIndex).drawings_tgui.size();i++)
+			{
+				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(i));
+			}
+			this->menus.pop_back();
+		}
 		}
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin()+c);
 	}
