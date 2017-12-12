@@ -14,10 +14,10 @@ namespace GameMenus {
 		OK = 0,
 		YESNO = 1
 	};
-	
+
+	MenuStructure msgBox;
 	MenuStructure MessageBox(sf::String msg, MessageType message_type, BoxType box_type, int screen_width, int screen_height)
 	{
-		MenuStructure msgBox;
 
 		auto theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
 
@@ -67,13 +67,22 @@ namespace GameMenus {
 		okButton->setText("OK");
 		okButton->setFont(*font);
 		okButton->setTextSize(32);
-		okButton->connect("pressed", [&]() { TGUIEventHandler::events.push_back(TGUIEvents::MESSAGE_BOX_OK); });
 
 		msgBox.drawings_sfml.push_back(messageBox);
 		msgBox.drawings_sfml.push_back(titleText);
 		msgBox.drawings_sfml.push_back(messageText);
 		msgBox.drawings_tgui.push_back(okButton);
 
+		//For write up, by putting the code inside the okbutton connect outside of here this causes errors. Talk about how I solved this error
+
+		okButton->connect("pressed", [&]()
+		{
+			TGUIEvent *eventResult = new TGUIEvent;
+			eventResult->eventType = TGUIEvents::MESSAGE_BOX_OK;
+			eventResult->menu = msgBox;
+			eventResult->arguments.push_back("test");
+			TGUIEventHandler::events.push_back(eventResult);
+		});
 
 		return msgBox;
 	}

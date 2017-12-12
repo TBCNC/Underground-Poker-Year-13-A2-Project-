@@ -53,7 +53,7 @@ namespace GameMenus {
 		login_button->setPosition(loginrectangle->getGlobalBounds().left + (loginrectangle->getLocalBounds().width*0.8), loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.8));
 		login_button->setSize(loginrectangle->getLocalBounds().width*0.15, loginrectangle->getLocalBounds().height*0.15);
 		login_button->setText("Login");
-		login_button->connect("pressed", [&]() {TGUIEventHandler::events.push_back(TGUIEvents::LOG_IN); });
+//		login_button->connect("pressed", [&]() {TGUIEventHandler::events.push_back(TGUIEvents::LOG_IN); });
 
 		MenuStructure menu;
 		menu.drawings_sfml.push_back(loginrectangle);

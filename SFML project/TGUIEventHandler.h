@@ -4,5 +4,5 @@
 class TGUIEventHandler
 {
 public:
-	static std::vector<TGUIEvents> events;
+	static std::vector<TGUIEvent*> events;
 };

@@ -14,7 +14,7 @@ void Game::Run() {
 	window.setFramerateLimit(60);
 	ScreenManagement screen_management(this->window, this->gui);
 	screen_management.menus.push_back(GameMenus::BackgroundImage(this->width, this->height));
-	screen_management.menus.push_back(GameMenus::LoginScreen(this->width,this->height));
+	screen_management.menus.push_back(GameMenus::MessageBox("Hello world!",GameMenus::MessageType::ERROR,GameMenus::BoxType::OK,this->width,this->height));
 	screen_management.InitializeScreen();
 	while (window.isOpen()) {	
 		screen_management.UpdateScreen();

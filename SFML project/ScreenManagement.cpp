@@ -12,28 +12,29 @@ void ScreenManagement::HandleTGUIEvents()
 {
 	for(int c=0;c<TGUIEventHandler::events.size();c++)
 	{
-		int menuIndex = this->menus.size() - 1;
-		switch(TGUIEventHandler::events.at(c))
+		switch(TGUIEventHandler::events.at(c)->eventType)
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
-			//Parse a pointer to this function later
-			for(int i=0;i<this->menus.at(menuIndex).drawings_tgui.size();i++)
-			{
-				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(i));
-			}
-			this->menus.pop_back();//Remove the message box since it will be biggest.
-			break;
-		case TGUIEvents::LOG_IN:{
-			//Log in here
-			for(int i=0;i<this->menus.at(menuIndex).drawings_tgui.size();i++)
-			{
-				this->window_tgui->remove(this->menus.at(menuIndex).drawings_tgui.at(i));
-			}
-			this->menus.pop_back();
+			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 		}
-		}
-		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin()+c);
+		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);
 	}
+}
+void ScreenManagement::RemoveMenu(MenuStructure menu)
+{
+	int index = FindIndexOfMenu(menu);
+	for(int c=0;c<this->menus.at(index).drawings_tgui.size();c++)
+		this->window_tgui->remove(this->menus.at(index).drawings_tgui.at(c));
+	this->menus.erase(this->menus.begin() + index);
+}
+int ScreenManagement::FindIndexOfMenu(MenuStructure menu)
+{
+	for(int c=0;c<this->menus.size();c++)
+	{
+		if(this->menus.at(c).drawings_sfml==menu.drawings_sfml && this->menus.at(c).drawings_tgui==menu.drawings_tgui)
+			return c;
+	}
+	return -1;//Couldn't find it.
 }
 void ScreenManagement::UpdateScreen() {
 	//Event polling

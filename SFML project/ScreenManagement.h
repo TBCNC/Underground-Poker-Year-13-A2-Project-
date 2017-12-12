@@ -21,6 +21,8 @@ private:
 	void DrawSFML();
 	void DrawTGUI();
 	void HandleTGUIEvents();
+	void RemoveMenu(MenuStructure menu);
+	int FindIndexOfMenu(MenuStructure menu);
 	sf::RenderWindow *window_sfml;
 	tgui::Gui *window_tgui;
 };
