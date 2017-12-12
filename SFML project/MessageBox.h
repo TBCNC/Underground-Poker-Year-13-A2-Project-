@@ -60,30 +60,68 @@ namespace GameMenus {
 		messageText->setString(msg);
 		messageText->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (messageText->getLocalBounds().width / 2), messageBox->getGlobalBounds().top*1.45);
 		messageText->setFillColor(sf::Color::White);
-		//Let's just focus on OK buttons for now and worry about Yes and No later.
-
 		tgui::Button::Ptr okButton = theme->load("Button");
-		okButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
-		okButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2)-(okButton->getSize().x/2), messageBox->getGlobalBounds().top*1.8);
-		okButton->setText("OK");
-		okButton->setFont(*font);
-		okButton->setTextSize(32);
+		tgui::Button::Ptr yesButton = theme->load("Button");
+		tgui::Button::Ptr noButton = theme->load("Button");
+		if (box_type == BoxType::OK) {
+			okButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
+			okButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2), messageBox->getGlobalBounds().top*1.8);
+			okButton->setText("OK");
+			okButton->setFont(*font);
+			okButton->setTextSize(32);
+		}else if(box_type==BoxType::YESNO)
+		{
+			yesButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
+			noButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
+			yesButton->setText("YES");
+			noButton->setText("NO");
+			yesButton->setFont(*font);
+			noButton->setFont(*font);
+			yesButton->setTextSize(32);
+			noButton->setTextSize(32);
+
+			yesButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) - messageBox->getGlobalBounds().left*1.4, messageBox->getGlobalBounds().top*1.8);
+			noButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) - messageBox->getGlobalBounds().left*1.6, messageBox->getGlobalBounds().top*1.8);
+		}
 
 		msgBox.drawings_sfml.push_back(messageBox);
 		msgBox.drawings_sfml.push_back(titleText);
 		msgBox.drawings_sfml.push_back(messageText);
-		msgBox.drawings_tgui.push_back(okButton);
+		if (box_type == BoxType::OK) {
+			msgBox.drawings_tgui.push_back(okButton); 
+			okButton->connect("pressed", [&]()
+			{
+				TGUIEvent *eventResult = new TGUIEvent;
+				eventResult->eventType = TGUIEvents::MESSAGE_BOX_OK;
+				eventResult->menu = msgBox;
+				eventResult->arguments.push_back("test");
+				TGUIEventHandler::events.push_back(eventResult);
+			});
+		}else if(box_type==BoxType::YESNO)
+		{
+			msgBox.drawings_tgui.push_back(yesButton); 
+			msgBox.drawings_tgui.push_back(noButton);
+			yesButton->connect("pressed", [&]()
+			{
+				TGUIEvent *eventResult = new TGUIEvent;
+				eventResult->eventType = TGUIEvents::MESSAGE_BOX_YES;
+				eventResult->menu = msgBox;
+				eventResult->arguments.push_back("test");
+				TGUIEventHandler::events.push_back(eventResult);
+			});
+			noButton->connect("pressed", [&]()
+			{
+				TGUIEvent *eventResult = new TGUIEvent;
+				eventResult->eventType = TGUIEvents::MESSAGE_BOX_NO;
+				eventResult->menu = msgBox;
+				eventResult->arguments.push_back("test");
+				TGUIEventHandler::events.push_back(eventResult);
+			});
+		}
 
 		//For write up, by putting the code inside the okbutton connect outside of here this causes errors. Talk about how I solved this error
 
-		okButton->connect("pressed", [&]()
-		{
-			TGUIEvent *eventResult = new TGUIEvent;
-			eventResult->eventType = TGUIEvents::MESSAGE_BOX_OK;
-			eventResult->menu = msgBox;
-			eventResult->arguments.push_back("test");
-			TGUIEventHandler::events.push_back(eventResult);
-		});
+		
 
 		return msgBox;
 	}
