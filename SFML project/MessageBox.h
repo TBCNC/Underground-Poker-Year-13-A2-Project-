@@ -18,7 +18,8 @@ namespace GameMenus {
 	MenuStructure msgBox;
 	MenuStructure MessageBox(sf::String msg, MessageType message_type, BoxType box_type, int screen_width, int screen_height)
 	{
-
+		msgBox.drawings_sfml.clear();
+		msgBox.drawings_tgui.clear();
 		auto theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
 
 		sf::RectangleShape *messageBox = new sf::RectangleShape();

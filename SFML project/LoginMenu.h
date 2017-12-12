@@ -10,6 +10,9 @@ namespace GameMenus {
 	tgui::EditBox::Ptr login_box = theme->load("EditBox");
 	tgui::EditBox::Ptr password_box = theme->load("EditBox");
 	MenuStructure LoginScreen(int gameWidth, int gameHeight) {
+		menu.drawings_tgui.clear();
+		menu.drawings_sfml.clear();
+
 		//Loading title
 		sf::Font *pokerFont = new sf::Font();
 		if (!pokerFont->loadFromFile("resources/Electrolize-Regular.ttf"))
