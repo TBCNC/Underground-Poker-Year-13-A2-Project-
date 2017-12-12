@@ -1,4 +1,5 @@
 #include "ScreenManagement.h"
+#include "MessageBox.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
@@ -12,6 +13,7 @@ void ScreenManagement::HandleTGUIEvents()
 {
 	for(int c=0;c<TGUIEventHandler::events.size();c++)
 	{
+		MenuStructure msgBox2;
 		switch(TGUIEventHandler::events.at(c)->eventType)
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
@@ -20,11 +22,19 @@ void ScreenManagement::HandleTGUIEvents()
 		case TGUIEvents::LOG_IN:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 			//Log in the user here Index 0=Username Index 1=Password
-			//Display a status box
+			//Display a status box that updates as the user is being logged in
+			MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+			AddMenu(msgBox);
 			break;
 		}
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);
 	}
+}
+void ScreenManagement::AddMenu(MenuStructure menu)
+{
+	for(int c=0;c<menu.drawings_tgui.size();c++)
+		this->window_tgui->add(menu.drawings_tgui.at(c));
+	this->menus.push_back(menu);
 }
 void ScreenManagement::RemoveMenu(MenuStructure menu)
 {
