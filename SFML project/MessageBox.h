@@ -71,8 +71,8 @@ namespace GameMenus {
 			okButton->setTextSize(32);
 		}else if(box_type==BoxType::YESNO)
 		{
-			yesButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
-			noButton->setSize(messageBox->getLocalBounds().width*0.3, messageBox->getLocalBounds().height*0.15);
+			yesButton->setSize(messageBox->getLocalBounds().width*0.2, messageBox->getLocalBounds().height*0.15);
+			noButton->setSize(messageBox->getLocalBounds().width*0.2, messageBox->getLocalBounds().height*0.15);
 			yesButton->setText("YES");
 			noButton->setText("NO");
 			yesButton->setFont(*font);
@@ -80,8 +80,8 @@ namespace GameMenus {
 			yesButton->setTextSize(32);
 			noButton->setTextSize(32);
 
-			yesButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) - messageBox->getGlobalBounds().left*1.4, messageBox->getGlobalBounds().top*1.8);
-			noButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) - messageBox->getGlobalBounds().left*1.6, messageBox->getGlobalBounds().top*1.8);
+			yesButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) - messageBox->getGlobalBounds().left*0.4, messageBox->getGlobalBounds().top*1.8);
+			noButton->setPosition((messageBox->getGlobalBounds().left) + (messageBox->getLocalBounds().width / 2) - (okButton->getSize().x / 2) + messageBox->getGlobalBounds().left*0.2, messageBox->getGlobalBounds().top*1.8);
 		}
 
 		msgBox.drawings_sfml.push_back(messageBox);
