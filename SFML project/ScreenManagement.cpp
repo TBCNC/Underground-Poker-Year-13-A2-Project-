@@ -16,6 +16,12 @@ void ScreenManagement::HandleTGUIEvents()
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+			break;
+		case TGUIEvents::LOG_IN:
+			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+			//Log in the user here Index 0=Username Index 1=Password
+			//Display a status box
+			break;
 		}
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);
 	}

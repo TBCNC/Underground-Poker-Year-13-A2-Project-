@@ -5,8 +5,11 @@
 #include <TGUI/TGUI.hpp>
 #pragma once
 namespace GameMenus {
+	auto theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
+	MenuStructure menu;
+	tgui::EditBox::Ptr login_box = theme->load("EditBox");
+	tgui::EditBox::Ptr password_box = theme->load("EditBox");
 	MenuStructure LoginScreen(int gameWidth, int gameHeight) {
-		
 		//Loading title
 		sf::Font *pokerFont = new sf::Font();
 		if (!pokerFont->loadFromFile("resources/Electrolize-Regular.ttf"))
@@ -34,15 +37,12 @@ namespace GameMenus {
 		form_title->setPosition(loginrectangle->getLocalBounds().left + (loginrectangle->getGlobalBounds().width*0.2), loginrectangle->getGlobalBounds().top + loginrectangle->getLocalBounds().height*0.05);
 		form_title->setFillColor(sf::Color::White);
 
-		auto theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
 
-		tgui::EditBox::Ptr login_box = theme->load("EditBox");
 		login_box->setPosition(loginrectangle->getGlobalBounds().left + (loginrectangle->getLocalBounds().width*0.025), loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.25));
 		login_box->setSize(loginrectangle->getLocalBounds().width*0.95, loginrectangle->getLocalBounds().height*0.2);
 		login_box->setFont(*pokerFont);
 		login_box->setDefaultText("Username");
 
-		tgui::EditBox::Ptr password_box = theme->load("EditBox");
 		password_box->setPosition(loginrectangle->getGlobalBounds().left + (loginrectangle->getLocalBounds().width*0.025), loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.5));
 		password_box->setSize(loginrectangle->getLocalBounds().width*0.95, loginrectangle->getLocalBounds().height*0.2);
 		password_box->setPasswordCharacter('*');
@@ -53,9 +53,17 @@ namespace GameMenus {
 		login_button->setPosition(loginrectangle->getGlobalBounds().left + (loginrectangle->getLocalBounds().width*0.8), loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.8));
 		login_button->setSize(loginrectangle->getLocalBounds().width*0.15, loginrectangle->getLocalBounds().height*0.15);
 		login_button->setText("Login");
-//		login_button->connect("pressed", [&]() {TGUIEventHandler::events.push_back(TGUIEvents::LOG_IN); });
 
-		MenuStructure menu;
+		login_button->connect("pressed", [&]()
+		{
+			TGUIEvent *eventResult = new TGUIEvent;
+			eventResult->eventType = TGUIEvents::LOG_IN;
+			eventResult->menu = menu;
+			eventResult->arguments.push_back(login_box->getText());
+			eventResult->arguments.push_back(password_box->getText());
+			TGUIEventHandler::events.push_back(eventResult);
+		});
+
 		menu.drawings_sfml.push_back(loginrectangle);
 		menu.drawings_sfml.push_back(title);
 		menu.drawings_sfml.push_back(form_title);
