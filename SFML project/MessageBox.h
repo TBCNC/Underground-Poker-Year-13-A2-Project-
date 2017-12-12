@@ -88,7 +88,9 @@ namespace GameMenus {
 		msgBox.drawings_sfml.push_back(titleText);
 		msgBox.drawings_sfml.push_back(messageText);
 		if (box_type == BoxType::OK) {
-			msgBox.drawings_tgui.push_back(okButton); 
+			msgBox.drawings_tgui.push_back(okButton);
+			//For write up, by putting the code inside the okbutton connect outside of here this causes errors. Talk about how I solved this error
+
 			okButton->connect("pressed", [&]()
 			{
 				TGUIEvent *eventResult = new TGUIEvent;
@@ -118,8 +120,6 @@ namespace GameMenus {
 				TGUIEventHandler::events.push_back(eventResult);
 			});
 		}
-
-		//For write up, by putting the code inside the okbutton connect outside of here this causes errors. Talk about how I solved this error
 
 		
 
