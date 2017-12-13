@@ -27,8 +27,6 @@ void ScreenManagement::HandleTGUIEvents()
 			break;
 		case TGUIEvents::LOG_IN:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
-			//Log in the user here Index 0=Username Index 1=Password
-			//Display a status box that updates as the user is being logged in
 			MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 			AddMenu(msgBox);
 			break;
