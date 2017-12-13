@@ -34,6 +34,9 @@
     <Filter Include="Source Files\SQL\User">
       <UniqueIdentifier>{1e1ebad3-9df0-43fb-9161-b24fc698c5b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\SQL\User">
+      <UniqueIdentifier>{05aa4fbe-1c97-4b3a-9d22-c8a594c8b396}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
