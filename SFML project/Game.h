@@ -14,5 +14,4 @@ public:
 private:
 	sf::RenderWindow *window;
 	tgui::Gui *gui;
-	void ManageEvent(sf::Event event);
 };

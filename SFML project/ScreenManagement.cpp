@@ -63,6 +63,9 @@ void ScreenManagement::UpdateScreen() {
 		this->window_tgui->handleEvent(event);
 		if(TGUIEventHandler::events.size()>0)
 			this->HandleTGUIEvents();
+		if (event.type == sf::Event::Closed) {
+			this->window_sfml->close();
+		}
 	}
 	//Graphical drawing
 	this->window_sfml->clear();
