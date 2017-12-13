@@ -10,7 +10,6 @@ void DBConnection::ExecuteQuery_Write() {
 	
 }
 void DBConnection::ExecuteQuery_Read() {
-	
 }
 char* DBConnection::ClearString(char* query) {
 	char* newString = nullptr;
