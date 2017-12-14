@@ -5,6 +5,9 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
 }
+ScreenManagement::~ScreenManagement()
+{
+}
 void ScreenManagement::InitializeScreen() {
 	this->window_tgui->removeAllWidgets();
 	this->DrawTGUI();
@@ -60,12 +63,12 @@ void ScreenManagement::UpdateScreen() {
 	//Event polling
 	sf::Event event;
 	while (this->window_sfml->pollEvent(event)) {
-		this->window_tgui->handleEvent(event);
-		if(TGUIEventHandler::events.size()>0)
-			this->HandleTGUIEvents();
 		if (event.type == sf::Event::Closed) {
 			this->window_sfml->close();
 		}
+		this->window_tgui->handleEvent(event);
+		if(TGUIEventHandler::events.size()>0)
+			this->HandleTGUIEvents();
 	}
 	//Graphical drawing
 	this->window_sfml->clear();

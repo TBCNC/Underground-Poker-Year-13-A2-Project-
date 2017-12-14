@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "MessageBox.h"
+#include "TGUIEventHandler.h"
 
 Game::Game(int width, int height, bool AA) {
 	this->width = width;
@@ -12,6 +13,7 @@ void Game::Run() {
 	this->window = &window;
 	this->gui = &gui;
 	window.setFramerateLimit(60);
+	TGUIEventHandler handler;
 	ScreenManagement screen_management(this->window, this->gui);
 	screen_management.menus.push_back(GameMenus::BackgroundImage(this->width, this->height));
 	screen_management.menus.push_back(GameMenus::LoginScreen(this->width, this->height));
@@ -20,4 +22,5 @@ void Game::Run() {
 	while (window.isOpen()) {	
 		screen_management.UpdateScreen();
 	}
+	std::cout << "Closing window..." << std::endl;
 }
