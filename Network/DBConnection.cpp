@@ -8,6 +8,7 @@ DBConnection::DBConnection() {
 		std::cout << "Connected!" << std::endl;
 	else
 		std::cout << "Uh oh!" << std::endl;
+
 }
 DBConnection::~DBConnection() {
 	delete this->sql_connection;
@@ -17,9 +18,9 @@ void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::st
 {
 	//Constructing a string for the query. Also, for arguments check whether they can be converted to integer.
 	//Also going to be using prepared statements.
-	std::string sqlQuery = "INSERT INTO ? (";
+	std::string sqlQuery = "INSERT INTO " + (std::string)DB_DATABASE + "." + tableName + " (";
 	for (int c = 0; c < fields.size(); c++) {
-		sqlQuery += "?";
+		sqlQuery += fields.at(c);
 		if (c != fields.size() - 1)
 			sqlQuery += ",";
 		else
@@ -34,22 +35,25 @@ void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::st
 			sqlQuery += ");";
 	}
 	std::cout << sqlQuery << std::endl;
-	sql::PreparedStatement *prepared_statement = NULL;
-	prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
-	prepared_statement->setString(1, tableName);
-	for (int c = 0; c < fields.size(); c++) {
-		prepared_statement->setString(c + 2, fields.at(c));
-	}
-	for (int i = 0; i < arguments.size(); i++) {
-		if (arguments.at(i).find_first_not_of("0123456789") == std::string::npos) {
-			prepared_statement->setInt(fields.size() + 2 + i, stoi(arguments.at(i)));
+	try {
+		sql::PreparedStatement *prepared_statement = NULL;
+		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
+		for (int i = 0; i < arguments.size(); i++) {
+			if (arguments.at(i).find_first_not_of("0123456789") == std::string::npos) {
+				prepared_statement->setInt(i+1, stoi(arguments.at(i)));
+			}
+			else {
+				prepared_statement->setString(i+1, arguments.at(i));
+			}
 		}
-		else {
-			prepared_statement->setString(fields.size() + 2 + i, arguments.at(i));
-		}
+		prepared_statement->execute();
+		delete prepared_statement;
 	}
-	prepared_statement->execute();
-	delete prepared_statement;
+	catch (sql::SQLException e) {
+		std::cout << "Caught exception" << std::endl;
+		std::cout << e.getSQLState() << std::endl;
+		std::cout << e.getErrorCode() << std::endl;
+	}
 } 
 void DBConnection::ExecuteQuery_Select()
 {
