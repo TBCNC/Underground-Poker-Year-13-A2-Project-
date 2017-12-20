@@ -5,6 +5,7 @@
 #pragma once
 class Player {
 public:
+	Player();
 	void Fold();
 	void Call(int points);
 	void Raise(int points);

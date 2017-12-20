@@ -38,6 +38,7 @@
     <ClCompile Include="Dealer.cpp" />
     <ClCompile Include="ELORanker.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PokerRanker.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>

@@ -1,3 +1,5 @@
+#include <iostream>
+#include <iomanip>
 #include "Player.h"
 #include <vector>
 #pragma once
@@ -6,45 +8,44 @@
 ///</summary>
 enum GameRanks : int{
 	Unranked=0,
-	Copper_1=30,
-	Copper_2=45,
-	Copper_3=60,
-	Copper_4=75,
-	Copper_5=90,
-	Bronze_1=105,
-	Bronze_2=120,
-	Bronze_3=135,
-	Bronze_4=150,
-	Bronze_5=165,
-	Silver_1=180,
-	Silver_2=195,
-	Silver_3=210,
-	Silver_4=225,
-	Silver_5=240,
-	Gold_1=255,
-	Gold_2=270,
-	Gold_3=285,
-	Gold_4=300,
-	Gold_5=315,
-	Diamond_1=330,
-	Diamond_2=345,
-	Diamond_3=360,
-	Diamond_4=375,
-	Diamond_5=390,
-	Ruby_1=405,
-	Ruby_2=420,
-	Ruby_3=435,
-	Ruby_4=450,
-	Ruby_5=465
-
+	Copper_1=1,
+	Copper_2=2,
+	Copper_3=3,
+	Copper_4=4,
+	Copper_5=5,
+	Bronze_1=6,
+	Bronze_2=7,
+	Bronze_3=8,
+	Bronze_4=9,
+	Bronze_5=10,
+	Silver_1=11,
+	Silver_2=12,
+	Silver_3=13,
+	Silver_4=14,
+	Silver_5=15,
+	Gold_1=16,
+	Gold_2=17,
+	Gold_3=18,
+	Gold_4=19,
+	Gold_5=20,
+	Diamond_1=21,
+	Diamond_2=22,
+	Diamond_3=23,
+	Diamond_4=24,
+	Diamond_5=25,
+	Ruby_1=26,
+	Ruby_2=27,
+	Ruby_3=28,
+	Ruby_4=29,
+	Ruby_5=30
 };
 class ELORanker {
 public:
-	ELORanker(Player *our_player, std::vector<Player> enemy_players);
-	float CalculatELORank(float final_score);
-	int CalculateGameRank(float rank_elo);
+	ELORanker(Player *our_player, std::vector<Player*> enemy_players);
+	double CalculatELORank(double final_score);
+	int CalculateGameRank(double rank_elo);
 private:
-	float CalculateExpectedScore();
+	double CalculateExpectedScore();
 	Player *our_player;
-	std::vector<Player> enemy_players;
+	std::vector<Player*> enemy_players;
 };
