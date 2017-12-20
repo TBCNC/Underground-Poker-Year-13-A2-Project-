@@ -8,6 +8,7 @@ public:
 	void Fold();
 	void Call(int points);
 	void Raise(int points);
+	int eloRank;
 	Hand hand;
 private:
 	int UID;
@@ -15,5 +16,4 @@ private:
 	sf::TcpSocket connection;
 	int points;
 	bool playing=true;
-	int eloRank;
 };

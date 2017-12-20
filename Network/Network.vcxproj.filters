@@ -72,6 +72,9 @@
     <ClInclude Include="UserAccount.h">
       <Filter>Source Files\SQL\User</Filter>
     </ClInclude>
+    <ClInclude Include="ELORanker.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp">
@@ -91,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="DBConnection.cpp">
       <Filter>Source Files\SQL</Filter>
+    </ClCompile>
+    <ClCompile Include="ELORanker.cpp">
+      <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

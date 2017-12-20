@@ -24,6 +24,7 @@
     <ClInclude Include="Cards.h" />
     <ClInclude Include="DBConnection.h" />
     <ClInclude Include="Dealer.h" />
+    <ClInclude Include="ELORanker.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="PacketType.h" />
     <ClInclude Include="Player.h" />
@@ -35,6 +36,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="DBConnection.cpp" />
     <ClCompile Include="Dealer.cpp" />
+    <ClCompile Include="ELORanker.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="PokerRanker.cpp" />
     <ClCompile Include="Server.cpp" />
