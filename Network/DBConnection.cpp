@@ -14,6 +14,9 @@ DBConnection::~DBConnection() {
 	delete this->sql_connection;
 	delete this->sql_driver;
 }
+///<summary>
+///Insert a new row into a MYSQL table
+///</summary>
 void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::string> fields, std::vector<std::string> arguments)//Complete
 {
 	//Constructing a string for the query. Also, for arguments check whether they can be converted to integer.
@@ -56,7 +59,10 @@ void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::st
 		std::cout << e.getErrorCode() << std::endl;
 	}
 } 
-void DBConnection::ExecuteQuery_Select(std::string table, std::vector<std::string> fields, std::vector<std::string> conditionFields=std::vector<std::string>(), std::vector<std::string> conditionArguments=std::vector<std::string>())
+///<summary>
+///Select information from columns of a MYSQL table based on conditions
+///</summary>
+std::vector<std::vector<std::string>> DBConnection::ExecuteQuery_Select(std::string table, std::vector<std::string> fields, std::vector<std::string> conditionFields=std::vector<std::string>(), std::vector<std::string> conditionArguments=std::vector<std::string>())
 {
 	std::string sqlQuery = "SELECT ";
 	for (int c = 0; c < fields.size(); c++) {
@@ -89,9 +95,16 @@ void DBConnection::ExecuteQuery_Select(std::string table, std::vector<std::strin
 		}
 		std::cout << "Executing query..." << std::endl;
 		sql::ResultSet *results = prepared_statement->executeQuery();
+		std::vector<std::vector<std::string>> return_results;
 		while (results->next()) {
-			std::cout << "Username:" << results->getString("Username") << "	Password:" << results->getString("Password") << std::endl;
+			std::vector<std::string> babyResults;
+			for (int c = 0; c < fields.size(); c++) {
+				babyResults.push_back(results->getString(fields.at(c)));
+			}
+			return_results.push_back(babyResults);
 		}
+		delete prepared_statement;
+		return return_results;
 	}
 	catch (sql::SQLException e) {
 		std::cout << "Caught exception" << std::endl;
@@ -99,8 +112,53 @@ void DBConnection::ExecuteQuery_Select(std::string table, std::vector<std::strin
 		std::cout << e.getErrorCode() << std::endl;
 	}
 }
-void DBConnection::ExecuteQuery_Update()
+///<summary>
+///Update information that is currently in a MYSQL table
+///</summary>
+void DBConnection::ExecuteQuery_Update(std::string table, std::vector<std::string> fields, std::vector<std::string> arguments, std::vector<std::string> conditionFields = std::vector<std::string>(), std::vector<std::string> conditionArguments = std::vector<std::string>())
 {
+	std::string sqlQuery = "UPDATE " + (std::string)(DB_DATABASE)+"."+table + " SET ";
+	for (int c = 0; c < fields.size(); c++) {
+		sqlQuery += fields.at(c) + "=?";
+		if (c != (fields.size() - 1))
+			sqlQuery += ",";
+	}
+	if (conditionFields.size() > 0) {
+		sqlQuery += " WHERE ";
+		for (int i = 0; i < conditionFields.size(); i++) {
+			sqlQuery += (conditionFields.at(i) + "=?");
+		}
+	}
+	sqlQuery += ";";
+	std::cout << "Preparing query " << sqlQuery << std::endl;
+	try {
+		sql::PreparedStatement *prepared_statement = NULL;
+		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
+		for (int c = 0; c < arguments.size(); c++) {
+			if (arguments.at(c).find_first_not_of("0123456789") == std::string::npos) {
+				prepared_statement->setInt(c + 1, stoi(arguments.at(c)));
+			}
+			else {
+				prepared_statement->setString(c + 1, arguments.at(c));
+			}
+		}
+		for (int i = 0; i < conditionArguments.size(); i++) {
+			if (conditionArguments.at(i).find_first_not_of("0123456789") == std::string::npos) {
+				prepared_statement->setInt(i + 1+arguments.size(), stoi(conditionArguments.at(i)));
+			}
+			else {
+				prepared_statement->setString(i + 1+arguments.size(), conditionArguments.at(i));
+			}
+		}
+		std::cout << "Executing..." << std::endl;
+		prepared_statement->execute();
+		delete prepared_statement;
+	}
+	catch (sql::SQLException e) {
+		std::cout << "Caught exception" << std::endl;
+		std::cout << "SQL state:" << e.getSQLState() << std::endl;
+		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
+	}
 }
 char* DBConnection::ClearString(char* query) {//May not need this now since we are using prepared statements
 	char* newString = nullptr;

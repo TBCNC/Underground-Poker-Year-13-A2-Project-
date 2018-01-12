@@ -15,8 +15,8 @@ public:
 	DBConnection();
 	~DBConnection();
 	void ExecuteQuery_Insert(std::string tableName,std::vector<std::string> fields, std::vector<std::string> arguments);
-	void ExecuteQuery_Select(std::string table, std::vector<std::string> fields,std::vector<std::string> conditionFields, std::vector<std::string> conditionArguments);
-	void ExecuteQuery_Update();
+	std::vector<std::vector<std::string>> ExecuteQuery_Select(std::string table, std::vector<std::string> fields,std::vector<std::string> conditionFields, std::vector<std::string> conditionArguments);
+	void ExecuteQuery_Update(std::string table, std::vector<std::string> fields,std::vector<std::string> arguments,std::vector<std::string> conditionFields, std::vector<std::string> conditionArguments);
 private:
 	char* ClearString(char* query);
 	sql::mysql::MySQL_Driver *sql_driver;
