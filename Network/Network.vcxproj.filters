@@ -37,6 +37,15 @@
     <Filter Include="Header Files\SQL\User">
       <UniqueIdentifier>{05aa4fbe-1c97-4b3a-9d22-c8a594c8b396}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\SQL\Security">
+      <UniqueIdentifier>{434ba4f7-7f1f-4e29-90c0-d6d265425fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SQL\Security">
+      <UniqueIdentifier>{8939f622-c96a-4916-80ff-16daa8731dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SQL\Querying">
+      <UniqueIdentifier>{1e68dc9c-7532-4233-a4a8-79a0d66597ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -69,11 +78,14 @@
     <ClInclude Include="DBConnection.h">
       <Filter>Header Files\SQL</Filter>
     </ClInclude>
-    <ClInclude Include="UserAccount.h">
-      <Filter>Source Files\SQL\User</Filter>
-    </ClInclude>
     <ClInclude Include="ELORanker.h">
       <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="UserAccount.h">
+      <Filter>Header Files\SQL\User</Filter>
+    </ClInclude>
+    <ClInclude Include="PasswordHash.h">
+      <Filter>Header Files\SQL\Security</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,14 +104,20 @@
     <ClCompile Include="Dealer.cpp">
       <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="DBConnection.cpp">
-      <Filter>Source Files\SQL</Filter>
-    </ClCompile>
     <ClCompile Include="ELORanker.cpp">
       <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="UserAccount.cpp">
+      <Filter>Source Files\SQL\User</Filter>
+    </ClCompile>
+    <ClCompile Include="PasswordHash.cpp">
+      <Filter>Source Files\SQL\Security</Filter>
+    </ClCompile>
+    <ClCompile Include="DBConnection.cpp">
+      <Filter>Source Files\SQL\Querying</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,9 +9,11 @@ public:
 	UserAccount();
 	UserAccount(int UID);
 	UserAccount(sf::String username, sf::String password);
-
-	static UserAccount RetrieveUserDetails(int UID);
+	bool Login();
 private:
+	void RetrieveInformation(int UID);
+	void RetrieveInformation(sf::String username);
+	sf::String GetPasswordHash();
 	int ELO;
 	sf::String username;
 	sf::Image profilePicture;
