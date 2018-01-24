@@ -4,14 +4,14 @@ std::string PasswordHash::GeneratePassword(std::string text, std::string salt) {
 	//Sha256 hashes are always 64 characters long (256 bits)
 	std::string passwordHash = EncodeHash(text);
 	passwordHash += salt;
-	int hashCycle = rand() % 25 + 10;
+	int hashCycle = rand() % 25 + 2;
 	for (int c = 0; c < hashCycle; c++) {
 		passwordHash = EncodeHash(passwordHash);
 		passwordHash += salt;
 	}
 	//Represent the hash cycle by the alphabet value or numerical value
 	std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	if (rand() % 1 + 0 == 0) {//Random chance
+	if (rand() % 1 + 0 == 0 || hashCycle>9) {//Random chance
 		passwordHash += alphabet[hashCycle - 1];
 	}
 	else {
