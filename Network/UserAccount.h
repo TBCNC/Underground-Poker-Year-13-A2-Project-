@@ -1,6 +1,7 @@
 #include "DBConnection.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include "PasswordHash.h"
 #pragma once
 
 class UserAccount
@@ -8,12 +9,14 @@ class UserAccount
 public:
 	UserAccount();
 	UserAccount(int UID);
-	UserAccount(sf::String username, sf::String password);
-	bool Login();
-private:
-	void RetrieveInformation(int UID);
-	void RetrieveInformation(sf::String username);
+	UserAccount(sf::String username);
+	bool Login(sf::String password);
+	void CreateAccount();
 	sf::String GetPasswordHash();
+private:
+	int UID=0;
+	bool UserExist();
+	void RetrieveInformation();
 	int ELO;
 	sf::String username;
 	sf::Image profilePicture;

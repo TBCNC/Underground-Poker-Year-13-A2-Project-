@@ -11,8 +11,9 @@ DBConnection::DBConnection() {
 
 }
 DBConnection::~DBConnection() {
-	delete this->sql_connection;
-	delete this->sql_driver;
+	//delete this->sql_connection;
+	//delete this->sql_driver;
+	this->sql_connection->close();
 }
 ///<summary>
 ///Insert a new row into a MYSQL table
