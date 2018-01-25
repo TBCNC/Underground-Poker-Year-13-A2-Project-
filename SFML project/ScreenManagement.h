@@ -1,6 +1,9 @@
+#include "LoginMenu.h"
+#include "MainMenu.h"
 #include "MenuStructure.h"
 #include "TGUIEvents.h"
 #include "TGUIEventHandler.h"
+#include "../Network/UserAccount.h"
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <vector>

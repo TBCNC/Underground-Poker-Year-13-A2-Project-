@@ -12,8 +12,8 @@ public:
 	UserAccount(sf::String username);
 	bool Login(sf::String password);
 	void CreateAccount();
-	sf::String GetPasswordHash();
 private:
+	sf::String GetPasswordHash();
 	int UID=0;
 	bool UserExist();
 	void RetrieveInformation();

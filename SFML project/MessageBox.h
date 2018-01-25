@@ -16,8 +16,10 @@ namespace GameMenus {
 	};
 
 	MenuStructure msgBox;
+	std::string fullMessage;
 	MenuStructure MessageBox(sf::String msg, MessageType message_type, BoxType box_type, int screen_width, int screen_height)
 	{
+		fullMessage = msg;
 		msgBox.drawings_sfml.clear();
 		msgBox.drawings_tgui.clear();
 		auto theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
@@ -96,7 +98,7 @@ namespace GameMenus {
 				TGUIEvent *eventResult = new TGUIEvent;
 				eventResult->eventType = TGUIEvents::MESSAGE_BOX_OK;
 				eventResult->menu = msgBox;
-				eventResult->arguments.push_back("test");
+				eventResult->arguments.push_back(fullMessage);
 				TGUIEventHandler::events.push_back(eventResult);
 			});
 		}else if(box_type==BoxType::YESNO)

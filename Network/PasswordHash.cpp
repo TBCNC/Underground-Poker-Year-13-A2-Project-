@@ -66,7 +66,6 @@ std::string PasswordHash::EncodeHash(std::string text) {
 
 	CryptoPP::HexEncoder encoder;
 	std::string output;
-
 	encoder.Attach(new CryptoPP::StringSink(output));
 	encoder.Put(digest, sizeof(digest));
 	encoder.MessageEnd();

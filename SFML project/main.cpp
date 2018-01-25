@@ -1,5 +1,5 @@
 #include "../Network/DBConnection.h"
-//#include "Game.h"
+#include "Game.h"
 #include "../Network/PasswordHash.h"
 #include "../Network/Cards.h"
 #include "../Network/UserAccount.h"
@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 int main() {
+	/*
 	//UserAccount account(1);
 	//account.GetPasswordHash();
 	//system("pause");
@@ -30,5 +31,8 @@ int main() {
 		std::cout << "Failed to log in." << std::endl;
 	}
 	system("pause");
+	*/
+	Game game(1600, 900);
+	game.Run();
 }
  

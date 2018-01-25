@@ -21,6 +21,14 @@ void ScreenManagement::HandleTGUIEvents()
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!") {
+				MenuStructure loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(loginMenu);
+			}
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Logged in successfully!") {
+				MenuStructure mainMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(mainMenu);
+			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_YES:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
@@ -30,8 +38,16 @@ void ScreenManagement::HandleTGUIEvents()
 			break;
 		case TGUIEvents::LOG_IN:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
-			MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-			AddMenu(msgBox);
+			//std::cout << TGUIEventHandler::events.at(c)->arguments.at(0) << std::endl;
+			UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0));
+			if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
+				MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(msgBox);
+			}
+			else {
+				MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(msgBox);
+			}
 			break;
 		}
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);

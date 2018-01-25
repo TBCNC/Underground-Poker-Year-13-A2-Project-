@@ -35,6 +35,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Login.h" />
     <ClInclude Include="LoginMenu.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Menus.h" />
     <ClInclude Include="MenuStructure.h" />
     <ClInclude Include="MessageBox.h" />
@@ -147,7 +148,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;CPPCONN_PUBLIC_FUNC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>

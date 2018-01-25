@@ -77,5 +77,8 @@
     <ClInclude Include="TGUIEventHandler.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
