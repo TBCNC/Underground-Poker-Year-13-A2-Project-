@@ -10,24 +10,35 @@ Server::Server(int portNum){
 		std::cout << "Server has started. Listening for new connections." << std::endl;
 		serverSelector.add(this->serverSocket);
 	}
-	
 }
 void Server::Start() {
 	while (this->serverOnline) {
 		if (this->serverSelector.wait()) {
+			if (this->currentPlayers >= 2) {
+				std::cout << "Starting game!" << std::endl;
+				gameOnline = true;
+				StartGame();
+			}
 			if (this->serverSelector.isReady(this->serverSocket)) {
 				TcpSocket *newClient = new TcpSocket;
 				if (this->serverSocket.accept(*newClient) != Socket::Done) {
-					//Error accepting him
+					//Error accepting them
 				}
 				else {
 					if (this->currentPlayers < MAX_PLAYERS) {
 						//Accept the connection
-						std::cout << "We got a new client! Sending them data..." << std::endl;
-						std::string message = "Welcome to our server\0";
-						PacketHandler packet(PacketType::SERVER_MESSAGE, message);
+						std::cout << "New client accepted. Sending successful connection message..." << std::endl;
+						std::string message = "";
+						PacketHandler packet(PacketType::SUCCESSFUL_CONNECTION, message);
+						serverSelector.add(*newClient);
+						this->currentPlayers++;
 						packet.SendPacket(newClient);
-						std::cout << "Data sent!" << std::endl;
+						UserAccount account(0);
+						//connectedClients.insert(std::pair<TcpSocket*, Player>(newClient, Player(account)));
+						Connection newConn;
+						newConn.player = Player(account);
+						newConn.socket = newClient;
+						connectedClients.push_back(newConn);
 					}
 					else {
 						newClient->disconnect();
@@ -36,20 +47,38 @@ void Server::Start() {
 			}
 			else {
 				for (int c = 0; c < this->connectedClients.size(); c++) {
-					if (this->serverSelector.isReady(*this->connectedClients.at(c))) {
-						//We have some new data, let's process it.
+					if (this->serverSelector.isReady(*this->connectedClients.at(c).socket)) {
+						std::cout << "New data!" << std::endl;
 						Packet data;
-						if (this->connectedClients.at(c)->receive(data) != Socket::Done) {
-							//Something went wrong
+						if (this->connectedClients.at(c).socket->receive(data) != Socket::Done) {
+							std::cout << "ERROR: There was an error recieving data from this socket." << std::endl;
 						}
 						else {
-							std::string message;
-							data >> message;
-							std::cout << "The message was:" << message << std::endl;
+							PacketHandler packet = PacketHandler::ProcessPacket(data);
+							ProcessPacket(packet,c);
 						}
 					}
 				}
+
 			}
+		}
+	}
+}
+void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
+	switch (packet.type) {
+	case PacketType::ACCOUNT_EXCHANGE:
+		//Their message in this case should be the user ID
+		std::cout << "A recently connected client wants to send their data." << std::endl;
+		UserAccount playerAccount(stoi(packet.payload));
+		this->connectedClients.at(sourceIndex).player = Player(playerAccount);
+		std::cout << "Account added! Their UID is " << packet.payload << std::endl;
+		break;
+	}
+}
+void Server::SendToAll(PacketHandler packet, Connection exclusion) {
+	for (int c = 0; c < connectedClients.size(); c++) {
+		if (connectedClients.at(c).socket != exclusion.socket) {
+			packet.SendPacket(connectedClients.at(c).socket);
 		}
 	}
 }

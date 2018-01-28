@@ -12,9 +12,11 @@ bool Exists(std::vector<Card> deck, Card card){
   }
   return false;
 }
-void Dealer::DealCard(Player player){
-  player.hand.cards.push_back(this->cards.cards.at(0));
-  //this->cards.cards.erase(std::remove(this->cards.cards.begin(), this->cards.cards.end(), 0), this->cards.cards.end());
+void Dealer::DealCard(Player *player){
+	Card card = this->cards.cards.at(0);
+	player->hand.cards.push_back(card);
+	this->cards.cards.erase(this->cards.cards.begin());
+	this->cards.cards.push_back(card);
 }
 Hand Dealer::GeneratePack(){
   Hand deck;

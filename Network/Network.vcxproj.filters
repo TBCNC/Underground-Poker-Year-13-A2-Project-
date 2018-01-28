@@ -60,9 +60,6 @@
     <ClInclude Include="PacketHandler.h">
       <Filter>Header Files\Networking</Filter>
     </ClInclude>
-    <ClInclude Include="ClientProcessor.h">
-      <Filter>Header Files\Networking</Filter>
-    </ClInclude>
     <ClInclude Include="Cards.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
@@ -118,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="DBConnection.cpp">
       <Filter>Source Files\SQL\Querying</Filter>
+    </ClCompile>
+    <ClCompile Include="PokerGame.cpp">
+      <Filter>Source Files\Networking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

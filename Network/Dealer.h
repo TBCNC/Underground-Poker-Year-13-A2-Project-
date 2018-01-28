@@ -11,7 +11,7 @@ class Dealer{
   public:
     Dealer(int cardSize);
     void Shuffle();
-    void DealCard(Player player);
+    void DealCard(Player *player);
     Hand cards;
   private:
     int cardSize;
