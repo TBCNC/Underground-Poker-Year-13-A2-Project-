@@ -2,10 +2,15 @@
 #include "MessageBox.h"
 #include "LoginMenu.h"
 #include "MainMenu.h"
+#include "Background.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
+	auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	this->menus.push_back(background);
+	this->menus.push_back(loginMenu);
 }
 ScreenManagement::~ScreenManagement()
 {

@@ -1,17 +1,16 @@
 //#include "../Network/UserAccount.h"
+#include "Game.h"
 #include <iostream>
 
 int main() {
 	//Server server(666);
 	//server.Start();
 
-	//Game game(1600, 900);
-	//game.Run();
+	Game game(1600, 900);
+	game.Run();
 	//UserAccount account("oneBigBoi");
 	//std::cout << account.UserExist() << std::endl;
-	std::cout << "test" << std::endl;
-	system("pause");
-	return 0;
+
 }
 /*
 //UserAccount account(1);

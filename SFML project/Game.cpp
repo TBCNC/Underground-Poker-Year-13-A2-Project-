@@ -1,7 +1,6 @@
 #include "Game.h"
 //#include "TGUIEventHandler.h"
-//#include "LoginMenu.h"
-//#include "Background.h"
+
 
 Game::Game(int width, int height, bool AA) {
 	this->width = width;
@@ -9,7 +8,7 @@ Game::Game(int width, int height, bool AA) {
 	this->AA = AA;
 }
 void Game::Run() {
-	/*sf::RenderWindow window(sf::VideoMode(this->width, this->height), "Underground poker");
+	sf::RenderWindow window(sf::VideoMode(this->width, this->height), "Underground poker");
 	tgui::Gui gui(window);
 	this->window = &window;
 	this->gui = &gui;
@@ -22,5 +21,5 @@ void Game::Run() {
 	while (window.isOpen()) {	
 		screen_management.UpdateScreen();
 	}
-	std::cout << "Closing window..." << std::endl;*/
+	std::cout << "Closing window..." << std::endl;
 }
