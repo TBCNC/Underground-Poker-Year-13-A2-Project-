@@ -13,8 +13,18 @@ bool UserAccount::Login(sf::String password)
 {
 	return PasswordHash::ComparePasswords(password, GetPasswordHash());
 }
-void UserAccount::CreateAccount() {
-
+bool UserAccount::CreateAccount(sf::String password,sf::String email) {
+	if (!UserExist()) {
+		std::string tableName = "users";
+		std::vector<std::vector<std::string>> results;
+		std::vector<std::string> fields = { "Username","Password","Email" };
+		std::vector<std::string> values = { this->username,PasswordHash::GeneratePassword(password),email };
+		DBConnection db;
+		db.ExecuteQuery_Insert(tableName, fields, values);
+		return true;
+	}
+	else
+		return false;
 }
 bool UserAccount::UserExist()
 {
@@ -37,6 +47,7 @@ bool UserAccount::UserExist()
 
 void UserAccount::RetrieveInformation()
 {
+
 }
 sf::String UserAccount::GetPasswordHash()
 {

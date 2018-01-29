@@ -1,6 +1,7 @@
 #include "DBConnection.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <SFML/Network.hpp>
 #include "PasswordHash.h"
 #pragma once
 
@@ -12,7 +13,7 @@ public:
 	UserAccount(sf::String username);
 	bool Login(sf::String password);
 	bool UserExist();
-	void CreateAccount();
+	bool CreateAccount(sf::String password,sf::String email);
 private:
 	sf::String GetPasswordHash();
 	int UID=0;
