@@ -21,6 +21,8 @@ bool UserAccount::CreateAccount(sf::String password,sf::String email) {
 		std::vector<std::string> values = { this->username,PasswordHash::GeneratePassword(password),email };
 		DBConnection db;
 		db.ExecuteQuery_Insert(tableName, fields, values);
+		db.ExecuteQuery_Insert_Blank("profile", "UID");
+		db.ExecuteQuery_Insert_Blank("statistics", "UID");
 		return true;
 	}
 	else
@@ -47,6 +49,9 @@ bool UserAccount::UserExist()
 
 void UserAccount::RetrieveInformation()
 {
+
+}
+sf::Image GetProfilePicture() {
 
 }
 sf::String UserAccount::GetPasswordHash()

@@ -161,6 +161,21 @@ void DBConnection::ExecuteQuery_Update(std::string table, std::vector<std::strin
 		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
 	}
 }
+void DBConnection::ExecuteQuery_Insert_Blank(std::string tableName,std::string autoIncrementName)
+{
+	std::string sqlQuery = "INSERT INTO " + (std::string)DB_DATABASE + "." + tableName + " (" + autoIncrementName + ") VALUES(null);";
+	try {
+		sql::PreparedStatement *prepared_statement = NULL;
+		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
+		prepared_statement->execute();
+		delete prepared_statement;
+	}
+	catch (sql::SQLException e) {
+		std::cout << "Caught exception" << std::endl;
+		std::cout << "SQL state:" << e.getSQLState() << std::endl;
+		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
+	}
+}
 char* DBConnection::ClearString(char* query) {//May not need this now since we are using prepared statements
 	char* newString = nullptr;
 	for (int c = 0; c < strlen(query); c++) {

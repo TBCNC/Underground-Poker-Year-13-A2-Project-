@@ -16,6 +16,7 @@ public:
 	bool CreateAccount(sf::String password,sf::String email);
 private:
 	sf::String GetPasswordHash();
+	sf::Image GetProfilePicture();
 	int UID=0;
 	void RetrieveInformation();
 	int ELO;
