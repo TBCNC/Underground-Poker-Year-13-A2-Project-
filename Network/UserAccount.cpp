@@ -51,8 +51,37 @@ void UserAccount::RetrieveInformation()
 {
 
 }
-sf::Image GetProfilePicture() {
+std::string UserAccount::GetProfilePicture() {
+	std::string tableName = "profile";
+	std::vector<std::vector<std::string>> results;
+	std::vector<std::string> fields = { "Profile_Pic" };
+	std::vector<std::string> conditionFields, conditionArguments;
+	if (this->UID == 0) {
+		conditionFields = { "Username" };
+		conditionArguments = { this->username };
+	}
+	else {
+		conditionFields = { "UID" };
+		conditionArguments = { std::to_string(this->UID) };
+	}
+	DBConnection db;
+	results = db.ExecuteQuery_Select(tableName, fields, conditionFields, conditionArguments);
+	std::string url = results.at(0).at(0);
 
+	sf::Http http;
+	sf::Http::Request req(url);
+	sf::Http::Response response = http.sendRequest(req);
+	std::string imageData = response.getBody();
+	std::ofstream file;
+	std::string newFileName;
+	time_t t = time(0);
+	struct tm * now = localtime(&t);
+	newFileName = "resources/profilePictures/" + PasswordHash::GeneratePassword(std::to_string(now->tm_sec) + std::to_string(now->tm_min) + std::to_string(now->tm_hour) + std::to_string(now->tm_yday)) + ".png";//Random file name
+	file.open(newFileName, std::ios::binary);
+	file.write(imageData.c_str(),imageData.size());
+	file.flush();
+	file.close();
+	return newFileName;
 }
 sf::String UserAccount::GetPasswordHash()
 {

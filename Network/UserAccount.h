@@ -1,4 +1,5 @@
 #include "DBConnection.h"
+#include <fstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
@@ -16,7 +17,7 @@ public:
 	bool CreateAccount(sf::String password,sf::String email);
 private:
 	sf::String GetPasswordHash();
-	sf::Image GetProfilePicture();
+	std::string GetProfilePicture();
 	int UID=0;
 	void RetrieveInformation();
 	int ELO;
