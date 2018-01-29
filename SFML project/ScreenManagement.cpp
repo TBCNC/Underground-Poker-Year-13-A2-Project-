@@ -1,5 +1,7 @@
 #include "ScreenManagement.h"
 #include "MessageBox.h"
+#include "LoginMenu.h"
+#include "MainMenu.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;

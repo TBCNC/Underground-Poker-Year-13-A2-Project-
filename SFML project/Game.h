@@ -1,8 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <TGUI/TGUI.hpp>
-#include "LoginMenu.h"
-#include "Background.h"
 #include "ScreenManagement.h"
 class Game {
 public:

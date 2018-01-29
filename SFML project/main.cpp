@@ -1,19 +1,17 @@
-#include "../Network/DBConnection.h"
-#include "Game.h"
-#include "../Network/PasswordHash.h"
-#include "../Network/Cards.h"
-#include "../Network/Server.h"
-#include "../Network/UserAccount.h"
+//#include "../Network/UserAccount.h"
 #include <iostream>
-#include "../Network/ELORanker.h"
-#include <Windows.h>
 
 int main() {
 	//Server server(666);
 	//server.Start();
 
-	Game game(1600, 900);
-	game.Run();
+	//Game game(1600, 900);
+	//game.Run();
+	//UserAccount account("oneBigBoi");
+	//std::cout << account.UserExist() << std::endl;
+	std::cout << "test" << std::endl;
+	system("pause");
+	return 0;
 }
 /*
 //UserAccount account(1);

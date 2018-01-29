@@ -16,10 +16,23 @@ bool UserAccount::Login(sf::String password)
 void UserAccount::CreateAccount() {
 
 }
-
 bool UserAccount::UserExist()
 {
-	return false;
+	std::string tableName = "users";
+	std::vector<std::vector<std::string>> results;
+	std::vector<std::string> fields = { "COUNT(Password)" };
+	std::vector<std::string> conditionFields, conditionArguments;
+	if (this->UID == 0) {
+		conditionFields = { "Username" };
+		conditionArguments = { this->username };
+	}
+	else {
+		conditionFields = { "UID" };
+		conditionArguments = { std::to_string(this->UID) };
+	}
+	DBConnection db;
+	results = db.ExecuteQuery_Select(tableName, fields, conditionFields, conditionArguments);
+	return results.at(0).at(0) == "1";
 }
 
 void UserAccount::RetrieveInformation()

@@ -11,11 +11,11 @@ public:
 	UserAccount(int UID);
 	UserAccount(sf::String username);
 	bool Login(sf::String password);
+	bool UserExist();
 	void CreateAccount();
 private:
 	sf::String GetPasswordHash();
 	int UID=0;
-	bool UserExist();
 	void RetrieveInformation();
 	int ELO;
 	sf::String username;

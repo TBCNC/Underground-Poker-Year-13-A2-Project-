@@ -1,5 +1,3 @@
-#include "LoginMenu.h"
-#include "MainMenu.h"
 #include "MenuStructure.h"
 #include "TGUIEvents.h"
 #include "TGUIEventHandler.h"
