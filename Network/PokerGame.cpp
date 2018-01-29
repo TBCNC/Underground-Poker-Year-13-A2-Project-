@@ -12,8 +12,15 @@ void Server::StartGame() {
 	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
 	packet.SendPacket(connectedClients.at(turnCounter).socket);
 }
-void Server::NextTurn() {
-	turnCounter++;
+bool Server::NextTurn() {
+	turnCounter++;//This is going to cause issues but worry about that later.
+	if (!connectedClients.at(turnCounter).player.playing) {
+		return false;
+	}
 	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
 	packet.SendPacket(connectedClients.at(turnCounter).socket);
+	return true;
+}
+void Server::PerformFold(Player *player) {
+	player->Fold();
 }

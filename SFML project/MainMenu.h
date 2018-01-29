@@ -7,6 +7,63 @@
 namespace GameMenus {
 	auto mainMenu_Theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
 	MenuStructure mainMenu;
+	std::vector<sf::FloatRect> MainMenu_GetBoxes(int gameWidth, int gameHeight) {
+		sf::Font *pokerFont = new sf::Font();
+		sf::Texture *profilePicture = new sf::Texture();
+
+		if (!pokerFont->loadFromFile("resources/Electrolize-Regular.ttf")) {
+			printf("Error loading font.");
+		}
+		sf::RectangleShape playerRectangle;
+		playerRectangle.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		playerRectangle.setSize(sf::Vector2f(gameWidth*0.25, gameHeight*0.2));
+		playerRectangle.setOutlineColor(sf::Color(117, 117, 117));
+		playerRectangle.setOutlineThickness(1.0);
+		playerRectangle.setPosition(gameWidth*0.02, gameHeight*0.02);
+
+		sf::RectangleShape statisticsRectangle;
+		statisticsRectangle.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		statisticsRectangle.setSize(sf::Vector2f(gameWidth*0.25, gameHeight*0.7));
+		statisticsRectangle.setOutlineColor(sf::Color(117, 117, 117));
+		statisticsRectangle.setOutlineThickness(1.0);
+		statisticsRectangle.setPosition(gameWidth*0.02, playerRectangle.getGlobalBounds().top + playerRectangle.getLocalBounds().height);
+
+		sf::RectangleShape announcementsRectangle;
+		announcementsRectangle.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		announcementsRectangle.setSize(sf::Vector2f(gameWidth*0.65, gameHeight*0.75));
+		announcementsRectangle.setOutlineColor(sf::Color(117, 117, 117));
+		announcementsRectangle.setOutlineThickness(1.0);
+		announcementsRectangle.setPosition(statisticsRectangle.getGlobalBounds().left + statisticsRectangle.getLocalBounds().width + gameWidth*0.02,
+			playerRectangle.getGlobalBounds().top + playerRectangle.getLocalBounds().height*0.75);
+
+		sf::RectangleShape option_play;
+		option_play.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_play.setSize(sf::Vector2f(announcementsRectangle.getLocalBounds().width / 3, playerRectangle.getGlobalBounds().height*0.5));
+		option_play.setOutlineColor(sf::Color(117, 117, 117));
+		option_play.setOutlineThickness(1.0);
+		option_play.setPosition(playerRectangle.getGlobalBounds().left + playerRectangle.getLocalBounds().width + gameWidth*0.02, playerRectangle.getGlobalBounds().top);
+
+		sf::RectangleShape option_options;
+		option_options.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_options.setSize(sf::Vector2f(announcementsRectangle.getLocalBounds().width / 3, playerRectangle.getGlobalBounds().height*0.5));
+		option_options.setOutlineColor(sf::Color(117, 117, 117));
+		option_options.setOutlineThickness(1.0);
+		option_options.setPosition(option_play.getGlobalBounds().left + option_play.getLocalBounds().width, playerRectangle.getGlobalBounds().top);
+
+		sf::RectangleShape option_quit;
+		option_quit.setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_quit.setSize(sf::Vector2f(announcementsRectangle.getLocalBounds().width / 3, playerRectangle.getGlobalBounds().height*0.5));
+		option_quit.setOutlineColor(sf::Color(117, 117, 117));
+		option_quit.setOutlineThickness(1.0);
+		option_quit.setPosition(option_options.getGlobalBounds().left + option_options.getLocalBounds().width, playerRectangle.getGlobalBounds().top);
+
+		sf::FloatRect rectPlay(option_play.getGlobalBounds().left, option_play.getGlobalBounds().top, option_play.getLocalBounds().width, option_play.getLocalBounds().height);
+		sf::FloatRect rectOptions(option_options.getGlobalBounds().left, option_options.getGlobalBounds().top, option_options.getLocalBounds().width, option_options.getLocalBounds().height);
+		sf::FloatRect rectQuit(option_quit.getGlobalBounds().left, option_quit.getGlobalBounds().top, option_quit.getLocalBounds().width, option_quit.getLocalBounds().height);
+
+		std::vector<sf::FloatRect> rects = { rectPlay,rectOptions,rectQuit };
+		return rects;
+	}
 	MenuStructure MainMenu(int gameWidth, int gameHeight) {
 		mainMenu.drawings_sfml.clear();
 		mainMenu.drawings_tgui.clear();
@@ -41,10 +98,57 @@ namespace GameMenus {
 
 		sf::RectangleShape *announcementsRectangle = new sf::RectangleShape();
 		announcementsRectangle->setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
-		announcementsRectangle->setSize(sf::Vector2f(gameWidth*0.65, gameHeight*0.7));
+		announcementsRectangle->setSize(sf::Vector2f(gameWidth*0.65, gameHeight*0.75));
 		announcementsRectangle->setOutlineColor(sf::Color(117, 117, 117));
 		announcementsRectangle->setOutlineThickness(1.0);
-		announcementsRectangle->setPosition(statisticsRectangle->getGlobalBounds().left + statisticsRectangle->getLocalBounds().width+gameWidth*0.02, statisticsRectangle->getGlobalBounds().top);
+
+		
+
+		//announcementsRectangle->setPosition(statisticsRectangle->getGlobalBounds().left + statisticsRectangle->getLocalBounds().width+gameWidth*0.02, statisticsRectangle->getGlobalBounds().top);
+		announcementsRectangle->setPosition(statisticsRectangle->getGlobalBounds().left + statisticsRectangle->getLocalBounds().width + gameWidth*0.02,
+			playerRectangle->getGlobalBounds().top + playerRectangle->getLocalBounds().height*0.75);
+
+		sf::RectangleShape *option_play = new sf::RectangleShape();
+		option_play->setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_play->setSize(sf::Vector2f(announcementsRectangle->getLocalBounds().width/3, playerRectangle->getGlobalBounds().height*0.5));
+		option_play->setOutlineColor(sf::Color(117, 117, 117));
+		option_play->setOutlineThickness(1.0);
+		option_play->setPosition(playerRectangle->getGlobalBounds().left + playerRectangle->getLocalBounds().width + gameWidth*0.02, playerRectangle->getGlobalBounds().top);
+
+		sf::RectangleShape *option_options = new sf::RectangleShape();
+		option_options->setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_options->setSize(sf::Vector2f(announcementsRectangle->getLocalBounds().width / 3, playerRectangle->getGlobalBounds().height*0.5));
+		option_options->setOutlineColor(sf::Color(117, 117, 117));
+		option_options->setOutlineThickness(1.0);
+		option_options->setPosition(option_play->getGlobalBounds().left + option_play->getLocalBounds().width, playerRectangle->getGlobalBounds().top);
+
+		sf::RectangleShape *option_quit = new sf::RectangleShape();
+		option_quit->setFillColor(sf::Color(0, 18, 109, 255 * 0.6));
+		option_quit->setSize(sf::Vector2f(announcementsRectangle->getLocalBounds().width / 3, playerRectangle->getGlobalBounds().height*0.5));
+		option_quit->setOutlineColor(sf::Color(117, 117, 117));
+		option_quit->setOutlineThickness(1.0);
+		option_quit->setPosition(option_options->getGlobalBounds().left + option_options->getLocalBounds().width, playerRectangle->getGlobalBounds().top);
+
+		sf::Text *option_play_text = new sf::Text();
+		option_play_text->setFont(*pokerFont);
+		option_play_text->setCharacterSize(2 * 0.000017*gameWidth*gameHeight);
+		option_play_text->setString("Play");
+		option_play_text->setPosition(option_play->getGlobalBounds().left + option_play->getLocalBounds().width / 2 - option_play_text->getLocalBounds().width / 2, option_play->getGlobalBounds().top+ option_play->getLocalBounds().height / 2-option_play_text->getLocalBounds().height*0.625);
+		option_play_text->setFillColor(sf::Color::White);
+		
+		sf::Text *option_options_text = new sf::Text();
+		option_options_text->setFont(*pokerFont);
+		option_options_text->setCharacterSize(2 * 0.000017*gameWidth*gameHeight);
+		option_options_text->setString("Options");
+		option_options_text->setPosition(option_options->getGlobalBounds().left + option_options->getLocalBounds().width / 2 - option_options_text->getLocalBounds().width / 2, option_options->getGlobalBounds().top + option_options->getLocalBounds().height / 2 - option_options_text->getLocalBounds().height*0.625);
+		option_options_text->setFillColor(sf::Color::White);
+	
+		sf::Text *option_quit_text = new sf::Text();
+		option_quit_text->setFont(*pokerFont);
+		option_quit_text->setCharacterSize(2 * 0.000017*gameWidth*gameHeight);
+		option_quit_text->setString("Quit");
+		option_quit_text->setPosition(option_quit->getGlobalBounds().left + option_quit->getLocalBounds().width / 2 - option_quit_text->getLocalBounds().width / 2, option_quit->getGlobalBounds().top + option_quit->getLocalBounds().height / 2 - option_quit_text->getLocalBounds().height*0.625);
+		option_quit_text->setFillColor(sf::Color::White);
 
 		if (!profilePicture->loadFromFile("resources/profilePic.png")) {
 			printf("Could not open profile pic.");
@@ -99,6 +203,12 @@ namespace GameMenus {
 		mainMenu.drawings_sfml.push_back(announcementsRectangle);
 		mainMenu.drawings_sfml.push_back(announcementsText_Heading);
 		mainMenu.drawings_sfml.push_back(announcementsText);
+		mainMenu.drawings_sfml.push_back(option_play);
+		mainMenu.drawings_sfml.push_back(option_options);
+		mainMenu.drawings_sfml.push_back(option_quit);
+		mainMenu.drawings_sfml.push_back(option_play_text);
+		mainMenu.drawings_sfml.push_back(option_options_text);
+		mainMenu.drawings_sfml.push_back(option_quit_text);
 		return mainMenu;
 	}
 }

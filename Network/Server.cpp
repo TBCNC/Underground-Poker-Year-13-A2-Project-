@@ -14,7 +14,7 @@ Server::Server(int portNum){
 void Server::Start() {
 	while (this->serverOnline) {
 		if (this->serverSelector.wait()) {
-			if (this->currentPlayers >= 2) {
+			if (this->currentPlayers >= 2 && !gameOnline) {
 				std::cout << "Starting game!" << std::endl;
 				gameOnline = true;
 				StartGame();
@@ -65,14 +65,29 @@ void Server::Start() {
 	}
 }
 void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
-	switch (packet.type) {
-	case PacketType::ACCOUNT_EXCHANGE:
-		//Their message in this case should be the user ID
+	auto type = packet.type;
+	if (type == PacketType::ACCOUNT_EXCHANGE) {
 		std::cout << "A recently connected client wants to send their data." << std::endl;
 		UserAccount playerAccount(stoi(packet.payload));
 		this->connectedClients.at(sourceIndex).player = Player(playerAccount);
 		std::cout << "Account added! Their UID is " << packet.payload << std::endl;
-		break;
+	}
+	else if (type == PacketType::MOVE_FOLD) {
+		std::cout << "Player wants to fold!" << std::endl;
+		PerformFold(&this->connectedClients.at(sourceIndex).player);
+		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "A player has folded!");
+		SendToAll(packetToSend, connectedClients.at(sourceIndex));//Let everyone know a player has folded
+		retry:
+		if ((turnCounter+1) != connectedClients.size()) {
+			if (!NextTurn()) {
+				goto retry;
+			}
+		}
+		else {
+			PacketHandler packetOver(PacketType::SERVER_MESSAGE, "We're all out of turns!");
+			Connection connect;
+			SendToAll(packetOver,connect);
+		}
 	}
 }
 void Server::SendToAll(PacketHandler packet, Connection exclusion) {

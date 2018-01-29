@@ -13,8 +13,8 @@ public:
 	void Raise(int points);
 	int eloRank;
 	Hand hand;
-private:
+	bool playing = true;
 	UserAccount user;
 	int points;
-	bool playing=true;
+private:
 };

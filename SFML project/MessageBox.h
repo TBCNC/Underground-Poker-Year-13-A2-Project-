@@ -110,7 +110,7 @@ namespace GameMenus {
 				TGUIEvent *eventResult = new TGUIEvent;
 				eventResult->eventType = TGUIEvents::MESSAGE_BOX_YES;
 				eventResult->menu = msgBox;
-				eventResult->arguments.push_back("test");
+				eventResult->arguments.push_back(fullMessage);
 				TGUIEventHandler::events.push_back(eventResult);
 			});
 			noButton->connect("pressed", [&]()
@@ -118,7 +118,7 @@ namespace GameMenus {
 				TGUIEvent *eventResult = new TGUIEvent;
 				eventResult->eventType = TGUIEvents::MESSAGE_BOX_NO;
 				eventResult->menu = msgBox;
-				eventResult->arguments.push_back("test");
+				eventResult->arguments.push_back(fullMessage);
 				TGUIEventHandler::events.push_back(eventResult);
 			});
 		}

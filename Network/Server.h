@@ -30,7 +30,7 @@ public:
 	int currentPlayers = 0;
 
 	void StartGame();
-	void NextTurn();
+	bool NextTurn();
 	void PerformFold(Player *player);
 	void PerformCall(Player *player, int callAmount);
 	void PerformRaise(Player *player, int raiseAmount);

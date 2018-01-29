@@ -24,17 +24,27 @@ void ScreenManagement::HandleTGUIEvents()
 			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!") {
 				MenuStructure loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(loginMenu);
+				currentMenu = MenuTypes::LOG_IN_MENU;
 			}
 			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Logged in successfully!") {
 				MenuStructure mainMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(mainMenu);
+				currentMenu = MenuTypes::MAIN_MENU;
 			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_YES:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Are you sure you want to quit?") {
+				window_sfml->close();
+			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_NO:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Are you sure you want to quit?") {
+				auto mainMenu = GameMenus::MainMenu(window_sfml->getSize().x, window_sfml->getSize().y);
+				AddMenu(mainMenu);
+				currentMenu = MenuTypes::MAIN_MENU;
+			}
 			break;
 		case TGUIEvents::LOG_IN:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
@@ -48,6 +58,7 @@ void ScreenManagement::HandleTGUIEvents()
 				MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(msgBox);
 			}
+			currentMenu = MenuTypes::MESSAGE_BOX;
 			break;
 		}
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);
@@ -75,6 +86,24 @@ int ScreenManagement::FindIndexOfMenu(MenuStructure menu)
 	}
 	return -1;//Couldn't find it.
 }
+void ScreenManagement::HandleSFMLEvents() {
+	if (currentMenu == MenuTypes::MAIN_MENU) {
+		auto boxes = GameMenus::MainMenu_GetBoxes(window_sfml->getSize().x, window_sfml->getSize().y);
+		if (boxes.at(0).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Play button pressed
+			std::cout << "User wants to play!" << std::endl;
+		}
+		else if (boxes.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Options button pressed
+			std::cout << "User wants to access options" << std::endl;
+		}
+		else if (boxes.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Quit button pressed
+			std::cout << "User wants to quit." << std::endl;
+			auto quitBox = GameMenus::MessageBox("Are you sure you want to quit?", GameMenus::MessageType::WARNING, GameMenus::BoxType::YESNO, window_sfml->getSize().x, window_sfml->getSize().y);
+			RemoveMenu(this->menus.at(1));//Should always be second index.
+			AddMenu(quitBox);
+			currentMenu = MenuTypes::MESSAGE_BOX;
+		}
+	}
+}
 void ScreenManagement::UpdateScreen() {
 	//Event polling
 	sf::Event event;
@@ -83,6 +112,11 @@ void ScreenManagement::UpdateScreen() {
 			this->window_sfml->close();
 		}
 		this->window_tgui->handleEvent(event);
+		if (event.type==sf::Event::MouseButtonPressed) {
+			if (event.mouseButton.button == sf::Mouse::Left && TGUIEventHandler::events.size()==0) {
+				HandleSFMLEvents();
+			}
+		}
 		if(TGUIEventHandler::events.size()>0)
 			this->HandleTGUIEvents();
 	}

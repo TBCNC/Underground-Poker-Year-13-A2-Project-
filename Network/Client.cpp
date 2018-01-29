@@ -35,7 +35,7 @@ void Client::ListenForData() {
 void Client::ProcessPacket(PacketHandler packet) {
 	PacketType type = packet.type;
 	if (type == SERVER_MESSAGE) {
-
+		std::cout << "Message from server:" << packet.payload << std::endl;
 	}
 	else if (type == SUCCESSFUL_CONNECTION) {
 		std::cout << "The server allowed us to connect! Let's send them our info." << std::endl;
