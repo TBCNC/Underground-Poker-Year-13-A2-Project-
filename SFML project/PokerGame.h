@@ -68,7 +68,45 @@ namespace GameMenus {
 		playerCard2->setPosition(chatRectangle->getGlobalBounds().left + chatRectangle->getGlobalBounds().width + screenWidth*0.08, chatRectangle->getGlobalBounds().top);
 
 		sf::RectangleShape *foldButton = new sf::RectangleShape();
-		foldButton->setFillColor(sf::Color::White);
+		foldButton->setFillColor(sf::Color(255,255,255,255*0.8));
+		foldButton->setSize(sf::Vector2f((playerCard2->getLocalBounds().width + playerCard2->getGlobalBounds().left)*0.17, chatMessageBox->getSize().y));
+		foldButton->setPosition(playerCard2->getGlobalBounds().left + playerCard2->getLocalBounds().width + screenWidth*0.05, chatMessageBox->getPosition().y);
+
+		sf::RectangleShape *callButton = new sf::RectangleShape();
+		callButton->setFillColor(sf::Color(255, 255, 255, 255 * 0.8));
+		callButton->setSize(sf::Vector2f((playerCard2->getLocalBounds().width + playerCard2->getGlobalBounds().left)*0.17, chatMessageBox->getSize().y));
+		callButton->setPosition(foldButton->getGlobalBounds().left + foldButton->getLocalBounds().width + screenWidth*0.01, chatMessageBox->getPosition().y);
+
+		sf::RectangleShape *raiseButton = new sf::RectangleShape();
+		raiseButton->setFillColor(sf::Color(255, 255, 255, 255 * 0.8));
+		raiseButton->setSize(sf::Vector2f((playerCard2->getLocalBounds().width + playerCard2->getGlobalBounds().left)*0.17, chatMessageBox->getSize().y));
+		raiseButton->setPosition(callButton->getGlobalBounds().left + callButton->getLocalBounds().width + screenWidth*0.01, chatMessageBox->getPosition().y);
+
+		sf::Text *foldButtonText = new sf::Text();
+		sf::Text *callButtonText = new sf::Text();
+		sf::Text *raiseButtonText = new sf::Text();
+		foldButtonText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+		callButtonText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+		raiseButtonText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+		foldButtonText->setFillColor(sf::Color::Black);
+		callButtonText->setFillColor(sf::Color::Black);
+		raiseButtonText->setFillColor(sf::Color::Black);
+		foldButtonText->setFont(*pokerFont);
+		callButtonText->setFont(*pokerFont);
+		raiseButtonText->setFont(*pokerFont);
+
+		foldButtonText->setString("Fold");
+		foldButtonText->setPosition((foldButton->getGlobalBounds().left + foldButton->getLocalBounds().width / 2) - foldButtonText->getLocalBounds().width / 2, (foldButton->getGlobalBounds().top + foldButton->getLocalBounds().height / 2)-3*foldButtonText->getLocalBounds().height/4);
+		callButtonText->setString("Call");
+		callButtonText->setPosition((callButton->getGlobalBounds().left + callButton->getLocalBounds().width / 2) - callButtonText->getLocalBounds().width / 2, (callButton->getGlobalBounds().top + callButton->getLocalBounds().height / 2) - 3 * callButtonText->getLocalBounds().height / 4);
+		raiseButtonText->setString("Raise");
+		raiseButtonText->setPosition((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width / 2) - raiseButtonText->getLocalBounds().width / 2, (raiseButton->getGlobalBounds().top + raiseButton->getLocalBounds().height / 2) - 3 * raiseButtonText->getLocalBounds().height / 4);
+
+		tgui::Slider::Ptr pointSlider = theme->load("Slider");
+		pointSlider->setMinimum(100);
+		pointSlider->setMaximum(1000);
+		pointSlider->setSize((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width) - foldButton->getGlobalBounds().left, foldButton->getLocalBounds().height*0.25);
+		pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
 
 		pokerGame.drawings_sfml.push_back(chatRectangle);
 		pokerGame.drawings_tgui.push_back(chatBox);
@@ -77,7 +115,13 @@ namespace GameMenus {
 		pokerGame.drawings_sfml.push_back(pokerTableGraphic);
 		pokerGame.drawings_sfml.push_back(playerCard1);
 		pokerGame.drawings_sfml.push_back(playerCard2);
-
+		pokerGame.drawings_sfml.push_back(foldButton);
+		pokerGame.drawings_sfml.push_back(callButton);
+		pokerGame.drawings_sfml.push_back(raiseButton);
+		pokerGame.drawings_sfml.push_back(foldButtonText);
+		pokerGame.drawings_sfml.push_back(callButtonText);
+		pokerGame.drawings_sfml.push_back(raiseButtonText);
+		pokerGame.drawings_tgui.push_back(pointSlider);
 		return pokerGame;
 	}
 }

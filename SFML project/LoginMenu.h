@@ -40,7 +40,6 @@ namespace GameMenus {
 		form_title->setPosition(loginrectangle->getLocalBounds().left + (loginrectangle->getGlobalBounds().width*0.2), loginrectangle->getGlobalBounds().top + loginrectangle->getLocalBounds().height*0.05);
 		form_title->setFillColor(sf::Color::White);
 
-
 		login_box->setPosition(loginrectangle->getGlobalBounds().left + (loginrectangle->getLocalBounds().width*0.025), loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.25));
 		login_box->setSize(loginrectangle->getLocalBounds().width*0.95, loginrectangle->getLocalBounds().height*0.2);
 		login_box->setFont(*pokerFont);
