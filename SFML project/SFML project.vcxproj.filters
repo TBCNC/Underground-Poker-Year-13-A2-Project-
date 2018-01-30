@@ -83,5 +83,8 @@
     <ClInclude Include="ServerList.h">
       <Filter>Header Files\Graphics\Menus</Filter>
     </ClInclude>
+    <ClInclude Include="PokerGame.h">
+      <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

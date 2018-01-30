@@ -39,6 +39,7 @@
     <ClInclude Include="Menus.h" />
     <ClInclude Include="MenuStructure.h" />
     <ClInclude Include="MessageBox.h" />
+    <ClInclude Include="PokerGame.h" />
     <ClInclude Include="ScreenManagement.h" />
     <ClInclude Include="ServerList.h" />
     <ClInclude Include="TGUIEventHandler.h" />

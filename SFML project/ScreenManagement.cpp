@@ -4,6 +4,7 @@
 #include "MainMenu.h"
 #include "Background.h"
 #include "ServerList.h"
+#include "PokerGame.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
@@ -12,8 +13,10 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
 	//this->menus.push_back(loginMenu);
-	auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-	this->menus.push_back(serverList);
+	//auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	//this->menus.push_back(serverList);
+	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	this->menus.push_back(poker);
 }
 ScreenManagement::~ScreenManagement()
 {

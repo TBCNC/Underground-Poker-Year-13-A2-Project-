@@ -4,7 +4,7 @@
 #include "../Network/UserAccount.h"
 
 int main() {
-	Game game(1280, 720);
+	Game game(1600, 900);
 	game.Run();
 	
 }
