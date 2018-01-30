@@ -13,7 +13,8 @@
 enum MenuTypes:int{
 	LOG_IN_MENU=0,
 	MESSAGE_BOX=1,
-	MAIN_MENU=2
+	MAIN_MENU=2,
+	SERVER_LIST=3,
 };
 class ScreenManagement : TGUIEventHandler{
 public:

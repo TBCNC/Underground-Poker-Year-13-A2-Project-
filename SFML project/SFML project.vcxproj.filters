@@ -80,5 +80,8 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Header Files\Graphics\Menus</Filter>
     </ClInclude>
+    <ClInclude Include="ServerList.h">
+      <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

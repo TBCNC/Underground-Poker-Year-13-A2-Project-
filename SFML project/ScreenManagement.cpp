@@ -3,14 +3,17 @@
 #include "LoginMenu.h"
 #include "MainMenu.h"
 #include "Background.h"
+#include "ServerList.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
-	auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	//auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
-	this->menus.push_back(loginMenu);
+	//this->menus.push_back(loginMenu);
+	auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	this->menus.push_back(serverList);
 }
 ScreenManagement::~ScreenManagement()
 {
@@ -98,6 +101,11 @@ void ScreenManagement::HandleSFMLEvents() {
 		auto boxes = GameMenus::MainMenu_GetBoxes(window_sfml->getSize().x, window_sfml->getSize().y);
 		if (boxes.at(0).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Play button pressed
 			std::cout << "User wants to play!" << std::endl;
+			auto serverList = GameMenus::ServerList(window_sfml->getSize().x, window_sfml->getSize().y);
+			//RemoveMenu(this->menus.at(FindIndexOfMenu(GameMenus::MainMenu(window_sfml->getSize().x, window_sfml->getSize().y)))); Causing exception, fix later.
+			RemoveMenu(this->menus.at(1));
+			AddMenu(serverList);
+			currentMenu = MenuTypes::SERVER_LIST;
 		}
 		else if (boxes.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Options button pressed
 			std::cout << "User wants to access options" << std::endl;
@@ -105,7 +113,8 @@ void ScreenManagement::HandleSFMLEvents() {
 		else if (boxes.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Quit button pressed
 			std::cout << "User wants to quit." << std::endl;
 			auto quitBox = GameMenus::MessageBox("Are you sure you want to quit?", GameMenus::MessageType::WARNING, GameMenus::BoxType::YESNO, window_sfml->getSize().x, window_sfml->getSize().y);
-			RemoveMenu(this->menus.at(1));//Should always be second index.
+			//RemoveMenu(this->menus.at(FindIndexOfMenu(GameMenus::MainMenu(window_sfml->getSize().x,window_sfml->getSize().y))));//Should always be second index but implementing check anyway. Broken, fix later
+			RemoveMenu(this->menus.at(1));
 			AddMenu(quitBox);
 			currentMenu = MenuTypes::MESSAGE_BOX;
 		}

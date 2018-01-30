@@ -1,4 +1,5 @@
 #include "UserAccount.h"
+//Until we find a solution for localtime_s
 
 UserAccount::UserAccount() {
 

@@ -84,6 +84,9 @@
     <ClInclude Include="PasswordHash.h">
       <Filter>Header Files\SQL\Security</Filter>
     </ClInclude>
+    <ClInclude Include="UserServers.h">
+      <Filter>Header Files\SQL\User</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="PokerGame.cpp">
       <Filter>Source Files\Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="UserServers.cpp">
+      <Filter>Source Files\SQL\User</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

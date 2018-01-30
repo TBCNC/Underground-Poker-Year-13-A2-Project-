@@ -31,6 +31,7 @@
     <ClInclude Include="PokerRanker.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="UserAccount.h" />
+    <ClInclude Include="UserServers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="PokerRanker.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="UserAccount.cpp" />
+    <ClCompile Include="UserServers.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -159,7 +161,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;CPPCONN_PUBLIC_FUNC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB;CPPCONN_PUBLIC_FUNC=;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)SFML-2.4.2\include;$(SolutionDir)SQL\include;$(SolutionDir)boost\include;C:\local\boost_1_65_1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile />
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
