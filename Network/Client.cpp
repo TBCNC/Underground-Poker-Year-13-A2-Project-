@@ -6,6 +6,7 @@ Client::Client(int UID) {
 	UserAccount account(UID);
 	this->player = Player(account);
 }
+
 void Client::ConnectToServer(IpAddress address, int port) {
 	if (this->connection.connect(address, port) == Socket::Done) {
 		this->listener.add(this->connection);//Connected to the server
@@ -42,6 +43,25 @@ void Client::ProcessPacket(PacketHandler packet) {
 		PacketHandler packet(PacketType::ACCOUNT_EXCHANGE,std::to_string(this->UID));
 		packet.SendPacket(&this->connection);
 		std::cout << "Sent account information." << std::endl;
+	}
+	else if (type == ALL_PLAYERS) {
+		std::cout << "Got player list" << std::endl;
+		std::stringstream stream(packet.payload);
+		std::string item;
+		std::vector<std::string> uids;
+		while (getline(stream, item, ',')) {
+			std::cout << "Adding:" << item << std::endl;
+			uids.push_back(item);
+		}
+		for (int c = 0; c < uids.size(); c++) {
+			if(uids.at(c)!="")
+				if(stoi(uids.at(c)) != this->UID)
+					this->enemies.push_back(Player(UserAccount(stoi(uids.at(c)),true)));
+		}
+		if (this->firstPlayerList)
+			firstPlayerList = false;
+		else
+			std::cout << this->enemies.at(enemies.size()-1).user.username.toAnsiString() << " connected!" << std::endl;
 	}
 	else if (type == CHAT_MESSAGE) {
 

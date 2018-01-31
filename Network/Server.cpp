@@ -29,11 +29,7 @@ Server::~Server() {
 void Server::Start() {
 	while (this->serverOnline) {
 		if (this->serverSelector.wait()) {
-			if (this->currentPlayers >= 2 && !gameOnline) {
-				std::cout << "Starting game!" << std::endl;
-				gameOnline = true;
-				StartGame();
-			}
+			
 			if (this->serverSelector.isReady(this->serverSocket)) {
 				TcpSocket *newClient = new TcpSocket;
 				if (this->serverSocket.accept(*newClient) != Socket::Done) {
@@ -73,7 +69,11 @@ void Server::Start() {
 						}
 					}
 				}
-
+			}
+			if (this->currentPlayers >= 4 && !gameOnline) {
+				std::cout << "Starting game!" << std::endl;
+				gameOnline = true;
+				StartGame();
 			}
 		}
 	}
@@ -85,8 +85,16 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		UserAccount playerAccount(stoi(packet.payload),true);
 		this->connectedClients.at(sourceIndex).player = Player(playerAccount);
 		std::cout << "Account added! Their UID is " << packet.payload << std::endl;
-		std::cout << "Sending player list to client..." << std::endl;
-		
+		std::cout << "Sending player list to all clients..." << std::endl;
+		std::string payload = "";
+		for (int c = 0; c < this->connectedClients.size(); c++) {
+			if (connectedClients.at(c).socket != connectedClients.at(sourceIndex).socket)
+				payload += std::to_string(connectedClients.at(c).player.user.UID);
+			payload += ",";
+		}
+		PacketHandler packetToSend(PacketType::ALL_PLAYERS, payload);
+		Connection conn;
+		SendToAll(packetToSend, conn);
 	}
 	else if (type == PacketType::MOVE_FOLD) {
 		std::cout << "Player wants to fold!" << std::endl;

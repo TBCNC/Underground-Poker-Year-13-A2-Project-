@@ -2,6 +2,7 @@
 #include <SFML/Network.hpp>
 #include "Player.h"
 #include "PacketHandler.h"
+#include <sstream>
 #pragma once
 
 using namespace sf;
@@ -18,4 +19,7 @@ private:
 	bool connected=false;
 	Player player=Player(UserAccount(1));//Need this initializer to prevent crashing
 	int UID;
+	bool firstPlayerList = true;
+	std::vector<std::string> Split(std::string &numeral, char delimeter);
+	std::vector<Player> enemies;
 };
