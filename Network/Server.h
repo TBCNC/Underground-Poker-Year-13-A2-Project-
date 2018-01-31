@@ -50,10 +50,13 @@ private:
 	int turnCounter = 0;//When this reaches the length of the list-outcounter, all players have played and we deal out more cards.
 	int currentTurnIndex = 0;
 	int totalJackpot = 0;
+	int minCall = 10;
 	bool competitive = false;
+	bool RoundOver();
 	Dealer deal = Dealer(52);
 	std::string name;
 	std::string password;
+	std::vector<Connection> playingGame;
 	int port;
 };
 

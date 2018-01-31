@@ -44,11 +44,14 @@ void Server::Start() {
 						serverSelector.add(*newClient);
 						this->currentPlayers++;
 						packet.SendPacket(newClient);
-						UserAccount account(1);
+						UserAccount account(0);
 						Connection newConn;
 						newConn.player = Player(account);
 						newConn.socket = newClient;
 						connectedClients.push_back(newConn);
+						if (!gameOnline) {
+							playingGame.push_back(newConn);
+						}
 					}
 					else {
 						newClient->disconnect();
@@ -84,12 +87,14 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		std::cout << "A recently connected client wants to send their data." << std::endl;
 		UserAccount playerAccount(stoi(packet.payload),true);
 		this->connectedClients.at(sourceIndex).player = Player(playerAccount);
-		std::cout << "Account added! Their UID is " << packet.payload << std::endl;
+		if (!gameOnline) {
+			playingGame.push_back(connectedClients.at(sourceIndex));
+		}
+		std::cout << "Account added! Their username is " << connectedClients.at(sourceIndex).player.user.username.toAnsiString() << std::endl;
 		std::cout << "Sending player list to all clients..." << std::endl;
 		std::string payload = "";
 		for (int c = 0; c < this->connectedClients.size(); c++) {
-			if (connectedClients.at(c).socket != connectedClients.at(sourceIndex).socket)
-				payload += std::to_string(connectedClients.at(c).player.user.UID);
+			payload += std::to_string(connectedClients.at(c).player.user.UID);
 			payload += ",";
 		}
 		PacketHandler packetToSend(PacketType::ALL_PLAYERS, payload);
@@ -97,20 +102,12 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		SendToAll(packetToSend, conn);
 	}
 	else if (type == PacketType::MOVE_FOLD) {
-		std::cout << "Player wants to fold!" << std::endl;
+		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to fold!" << std::endl;
 		PerformFold(&this->connectedClients.at(sourceIndex).player);
-		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "A player has folded!");
+		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + " has folded!");
 		SendToAll(packetToSend, connectedClients.at(sourceIndex));//Let everyone know a player has folded
-		retry:
-		if ((turnCounter+1) != connectedClients.size()) {
-			if (!NextTurn()) {
-				goto retry;
-			}
-		}
-		else {
-			PacketHandler packetOver(PacketType::SERVER_MESSAGE, "We're all out of turns!");
-			Connection connect;
-			SendToAll(packetOver,connect);
+		if (NextTurn()) {
+			std::cout << "Waiting for next turn..." << std::endl;
 		}
 	}
 }

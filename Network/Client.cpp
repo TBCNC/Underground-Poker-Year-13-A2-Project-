@@ -35,6 +35,7 @@ void Client::ListenForData() {
 }
 void Client::ProcessPacket(PacketHandler packet) {
 	PacketType type = packet.type;
+	std::string data = packet.payload;
 	if (type == SERVER_MESSAGE) {
 		std::cout << "Message from server:" << packet.payload << std::endl;
 	}
@@ -45,12 +46,12 @@ void Client::ProcessPacket(PacketHandler packet) {
 		std::cout << "Sent account information." << std::endl;
 	}
 	else if (type == ALL_PLAYERS) {
-		std::cout << "Got player list" << std::endl;
+		//std::cout << "Got player list" << std::endl;
 		std::stringstream stream(packet.payload);
 		std::string item;
 		std::vector<std::string> uids;
 		while (getline(stream, item, ',')) {
-			std::cout << "Adding:" << item << std::endl;
+			//std::cout << "Adding:" << item << std::endl;
 			uids.push_back(item);
 		}
 		for (int c = 0; c < uids.size(); c++) {
@@ -61,7 +62,8 @@ void Client::ProcessPacket(PacketHandler packet) {
 		if (this->firstPlayerList)
 			firstPlayerList = false;
 		else
-			std::cout << this->enemies.at(enemies.size()-1).user.username.toAnsiString() << " connected!" << std::endl;
+			if(this->enemies.size()!=0)
+				std::cout << this->enemies.at(enemies.size()-1).user.username.toAnsiString() << " connected!" << std::endl;
 	}
 	else if (type == CHAT_MESSAGE) {
 

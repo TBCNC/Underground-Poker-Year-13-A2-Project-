@@ -10,7 +10,6 @@ public:
 	Player(UserAccount user);
 	void Fold();
 	void Call(int points);
-	void Raise(int points);
 	int eloRank;
 	Hand hand;
 	bool playing = true;

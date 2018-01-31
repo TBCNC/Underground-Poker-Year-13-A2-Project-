@@ -12,15 +12,31 @@ void Server::StartGame() {
 	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
 	packet.SendPacket(connectedClients.at(turnCounter).socket);
 }
-bool Server::NextTurn() {
-	turnCounter++;//This is going to cause issues but worry about that later.
-	if (!connectedClients.at(turnCounter).player.playing) {
-		return false;
+bool Server::RoundOver() {//Check whether the round is over due to folds
+	int foldCount = 0;
+	for (int c = 0; c < playingGame.size(); c++) {
+		if (!playingGame.at(c).player.playing)
+			foldCount++;
 	}
+	return foldCount == playingGame.size() - 2;
+}
+bool Server::NextTurn() {
+	if (RoundOver())
+		return false;
 	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
-	packet.SendPacket(connectedClients.at(turnCounter).socket);
+	packet.SendPacket(playingGame.at(currentTurnIndex).socket);
 	return true;
 }
 void Server::PerformFold(Player *player) {
 	player->Fold();
+	this->playingGame.erase(this->playingGame.begin() + currentTurnIndex);
+}
+void Server::PerformCall(Player *player, int callAmount) {
+	player->Call(callAmount);
+	currentTurnIndex++;
+}
+void Server::PerformRaise(Player *player, int callAmount) {
+	player->Call(callAmount);
+	this->minCall = callAmount;
+	currentTurnIndex++;
 }

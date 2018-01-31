@@ -1,11 +1,11 @@
 #include "DBConnection.h"
 
 DBConnection::DBConnection() {
-	std::cout << "Connecting..." << std::endl;
+	//std::cout << "Connecting..." << std::endl;
 	this->sql_driver = sql::mysql::get_mysql_driver_instance();
 	this->sql_connection = this->sql_driver->connect("tcp://82.34.216.42:3306", DB_USERNAME, DB_PASSWORD);
 	if (this->sql_connection->isValid())
-		std::cout << "Connected!" << std::endl;
+		std::cout << "Connected to MySQL server!" << std::endl;
 	else
 		std::cout << "Uh oh!" << std::endl;
 
@@ -38,7 +38,7 @@ void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::st
 		else
 			sqlQuery += ");";
 	}
-	std::cout << "Prepared query:" << sqlQuery << std::endl;
+	//std::cout << "Prepared query:" << sqlQuery << std::endl;
 	try {
 		sql::PreparedStatement *prepared_statement = NULL;
 		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
@@ -50,12 +50,12 @@ void DBConnection::ExecuteQuery_Insert(std::string tableName,std::vector<std::st
 				prepared_statement->setString(i+1, arguments.at(i));
 			}
 		}
-		std::cout << "Executing query..." << std::endl;
+		//std::cout << "Executing query..." << std::endl;
 		prepared_statement->execute();
 		delete prepared_statement;
 	}
 	catch (sql::SQLException e) {
-		std::cout << "Caught exception" << std::endl;
+		std::cout << "Caught SQL exception" << std::endl;
 		std::cout << e.getSQLState() << std::endl;
 		std::cout << e.getErrorCode() << std::endl;
 	}
@@ -82,7 +82,7 @@ std::vector<std::vector<std::string>> DBConnection::ExecuteQuery_Select(std::str
 		}
 	}
 	sqlQuery += ";";
-	std::cout << "Prepared query:" << sqlQuery << std::endl;
+	//std::cout << "Prepared query:" << sqlQuery << std::endl;
 	try {
 		sql::PreparedStatement *prepared_statement = NULL;
 		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
@@ -94,7 +94,7 @@ std::vector<std::vector<std::string>> DBConnection::ExecuteQuery_Select(std::str
 				prepared_statement->setString(c + 1, conditionArguments.at(c));
 			}
 		}
-		std::cout << "Executing query..." << std::endl;
+		//std::cout << "Executing query..." << std::endl;
 		sql::ResultSet *results = prepared_statement->executeQuery();
 		std::vector<std::vector<std::string>> return_results;
 		while (results->next()) {
@@ -108,7 +108,7 @@ std::vector<std::vector<std::string>> DBConnection::ExecuteQuery_Select(std::str
 		return return_results;
 	}
 	catch (sql::SQLException e) {
-		std::cout << "Caught exception" << std::endl;
+		std::cout << "Caught SQL exception" << std::endl;
 		std::cout << e.getSQLState() << std::endl;
 		std::cout << e.getErrorCode() << std::endl;
 	}
@@ -131,7 +131,7 @@ void DBConnection::ExecuteQuery_Update(std::string table, std::vector<std::strin
 		}
 	}
 	sqlQuery += ";";
-	std::cout << "Preparing query " << sqlQuery << std::endl;
+	//std::cout << "Preparing query " << sqlQuery << std::endl;
 	try {
 		sql::PreparedStatement *prepared_statement = NULL;
 		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
@@ -151,12 +151,12 @@ void DBConnection::ExecuteQuery_Update(std::string table, std::vector<std::strin
 				prepared_statement->setString(i + 1+arguments.size(), conditionArguments.at(i));
 			}
 		}
-		std::cout << "Executing..." << std::endl;
+		//std::cout << "Executing..." << std::endl;
 		prepared_statement->execute();
 		delete prepared_statement;
 	}
 	catch (sql::SQLException e) {
-		std::cout << "Caught exception" << std::endl;
+		std::cout << "Caught SQL exception" << std::endl;
 		std::cout << "SQL state:" << e.getSQLState() << std::endl;
 		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
 	}
@@ -173,8 +173,8 @@ void DBConnection::ExecuteQuery_Delete(std::string tableName, std::vector<std::s
 		}
 	}
 	sqlQuery += ";";
-	std::cout << "Preparing query..." << std::endl;
-	std::cout << "Query:" << sqlQuery;
+	//std::cout << "Preparing query..." << std::endl;
+	//std::cout << "Query:" << sqlQuery;
 	try {
 		sql::PreparedStatement *prepared_statement = NULL;
 		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
@@ -186,12 +186,12 @@ void DBConnection::ExecuteQuery_Delete(std::string tableName, std::vector<std::s
 				prepared_statement->setString(i+1, conditionArguments.at(i));
 			}
 		}
-		std::cout << "Executing..." << std::endl;
+		//std::cout << "Executing..." << std::endl;
 		prepared_statement->execute();
 		delete prepared_statement;
 	}
 	catch (sql::SQLException e) {
-		std::cout << "Caught exception" << std::endl;
+		std::cout << "Caught SQL exception" << std::endl;
 		std::cout << "SQL state:" << e.getSQLState() << std::endl;
 		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
 	}
@@ -206,7 +206,7 @@ void DBConnection::ExecuteQuery_Insert_Blank(std::string tableName,std::string a
 		delete prepared_statement;
 	}
 	catch (sql::SQLException e) {
-		std::cout << "Caught exception" << std::endl;
+		std::cout << "Caught SQL exception" << std::endl;
 		std::cout << "SQL state:" << e.getSQLState() << std::endl;
 		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
 	}

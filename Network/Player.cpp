@@ -6,3 +6,6 @@ Player::Player(UserAccount user) {
 void Player::Fold() {
 	this->playing = false;
 }
+void Player::Call(int points) {
+	this->points -= points;
+}
