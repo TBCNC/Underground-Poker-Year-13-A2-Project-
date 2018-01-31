@@ -4,11 +4,14 @@
 UserAccount::UserAccount() {
 
 }
-UserAccount::UserAccount(int UID) {
+UserAccount::UserAccount(int UID, bool retrieveInfo) {
 	this->UID = UID;
+	if(retrieveInfo)
+		RetrieveInformation();
 }
 UserAccount::UserAccount(sf::String username) {
 	this->username = username;
+	RetrieveInformation();
 }
 bool UserAccount::Login(sf::String password)
 {
@@ -50,7 +53,14 @@ bool UserAccount::UserExist()
 
 void UserAccount::RetrieveInformation()
 {
-
+	if (UserExist()) {
+		DBConnection db;
+		if (this->UID == 0)
+			this->UID = stoi(db.ExecuteQuery_Select("users", { "UID" }, { "username" }, { (this->username) }).at(0).at(0));
+		else
+			this->username = db.ExecuteQuery_Select("users", { "username" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0);
+		this->ELO = stoi(db.ExecuteQuery_Select("statistics", { "ELO_RANKING" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0));
+	}
 }
 std::string UserAccount::GetProfilePicture() {
 	std::string tableName = "profile";

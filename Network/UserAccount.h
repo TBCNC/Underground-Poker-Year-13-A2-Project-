@@ -10,7 +10,7 @@ class UserAccount
 {
 public:
 	UserAccount();
-	UserAccount(int UID);
+	UserAccount(int UID, bool retrieveInfo=false);
 	UserAccount(sf::String username);
 	bool Login(sf::String password);
 	bool UserExist();
@@ -21,6 +21,6 @@ private:
 	int UID=0;
 	void RetrieveInformation();
 	int ELO;
-	sf::String username;
+	sf::String username="";
 	sf::Image profilePicture;
 };

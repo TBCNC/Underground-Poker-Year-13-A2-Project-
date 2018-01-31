@@ -16,6 +16,6 @@ private:
 	void ProcessPacket(PacketHandler packet);
 	void ListenForData();
 	bool connected=false;
-	Player player=Player(UserAccount(0));//Need this initializer to prevent crashing
+	Player player=Player(UserAccount(1));//Need this initializer to prevent crashing
 	int UID;
 };

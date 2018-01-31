@@ -47,7 +47,7 @@ namespace GameMenus {
 		sendMessageButton->setPosition(chatBox->getPosition().x + chatMessageBox->getSize().x+chatMessageBox->getSize().x*0.01, chatMessageBox->getPosition().y);
 
 		sf::Texture *pokerTableTexture = new sf::Texture();
-		if (pokerTableTexture->loadFromFile("resources/pokerTable.png"))
+		if (!pokerTableTexture->loadFromFile("resources/pokerTable.png"))
 			printf("Could not open poker table.");
 		sf::RectangleShape *pokerTableGraphic = new sf::RectangleShape();
 		pokerTableGraphic->setTexture(pokerTableTexture);
@@ -108,6 +108,18 @@ namespace GameMenus {
 		pointSlider->setSize((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width) - foldButton->getGlobalBounds().left, foldButton->getLocalBounds().height*0.25);
 		pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
 
+		sf::Text *sliderText = new sf::Text();
+		sliderText->setFont(*pokerFont);
+		sliderText->setCharacterSize(0.000017*screenWidth*screenHeight);
+		sliderText->setPosition(sf::Vector2f(pointSlider->getPosition().x+pointSlider->getSize().x*0.9,pointSlider->getPosition().y-pointSlider->getSize().y*2));
+		sliderText->setString(std::to_string(pointSlider->getValue()));
+
+		sf::FloatRect *sliderContainer = new sf::FloatRect();
+		sliderContainer->width = pointSlider->getSize().x;
+		sliderContainer->height = pointSlider->getSize().y;
+		sliderContainer->left = pointSlider->getPosition().x;
+		sliderContainer->top = pointSlider->getPosition().y;
+
 		pokerGame.drawings_sfml.push_back(chatRectangle);
 		pokerGame.drawings_tgui.push_back(chatBox);
 		pokerGame.drawings_tgui.push_back(chatMessageBox);
@@ -122,6 +134,10 @@ namespace GameMenus {
 		pokerGame.drawings_sfml.push_back(callButtonText);
 		pokerGame.drawings_sfml.push_back(raiseButtonText);
 		pokerGame.drawings_tgui.push_back(pointSlider);
+		pokerGame.drawings_sfml.push_back(sliderText);
 		return pokerGame;
+	}
+	std::vector<sf::FloatRect> GetFloatBoxes_Poker(int screenWidth, int screenHeight) {
+		
 	}
 }

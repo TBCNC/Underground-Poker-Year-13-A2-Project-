@@ -1,15 +1,30 @@
 #include "Server.h"
 
-Server::Server(int portNum){
+Server::Server(std::string name, int portNum, bool competitive, std::string password){
+	this->name = name;
+	this->port = portNum;
+	this->password = password;
+	this->competitive = competitive;
 	if (this->serverSocket.listen(portNum) != sf::Socket::Done) {
 		//Something has gone wrong.
 		serverOnline = false;
 	}
 	else {
 		//Using cout for debugging only
-		std::cout << "Server has started. Listening for new connections." << std::endl;
+		std::cout << "Server has started. Adding to database and listening for new connections." << std::endl;
+		if (!competitive) {
+			DBConnection db;
+			db.ExecuteQuery_Insert("servers", { "name","password","ip_address","port" }, { this->name,PasswordHash::GeneratePassword(this->password),sf::IpAddress::getPublicAddress().toString(),std::to_string(this->port) });
+		}
 		serverSelector.add(this->serverSocket);
 	}
+}
+Server::~Server() {
+	//Create a delete functino for dbconnection and use it here
+	std::cout << "Deleting!" << std::endl;
+	DBConnection db;
+	db.ExecuteQuery_Delete("servers", { "ip_address" }, { sf::IpAddress::getPublicAddress().toString() });
+
 }
 void Server::Start() {
 	while (this->serverOnline) {
@@ -33,8 +48,7 @@ void Server::Start() {
 						serverSelector.add(*newClient);
 						this->currentPlayers++;
 						packet.SendPacket(newClient);
-						UserAccount account(0);
-						//connectedClients.insert(std::pair<TcpSocket*, Player>(newClient, Player(account)));
+						UserAccount account(1);
 						Connection newConn;
 						newConn.player = Player(account);
 						newConn.socket = newClient;
@@ -68,9 +82,11 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 	auto type = packet.type;
 	if (type == PacketType::ACCOUNT_EXCHANGE) {
 		std::cout << "A recently connected client wants to send their data." << std::endl;
-		UserAccount playerAccount(stoi(packet.payload));
+		UserAccount playerAccount(stoi(packet.payload),true);
 		this->connectedClients.at(sourceIndex).player = Player(playerAccount);
 		std::cout << "Account added! Their UID is " << packet.payload << std::endl;
+		std::cout << "Sending player list to client..." << std::endl;
+		
 	}
 	else if (type == PacketType::MOVE_FOLD) {
 		std::cout << "Player wants to fold!" << std::endl;

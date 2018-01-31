@@ -161,6 +161,41 @@ void DBConnection::ExecuteQuery_Update(std::string table, std::vector<std::strin
 		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
 	}
 }
+void DBConnection::ExecuteQuery_Delete(std::string tableName, std::vector<std::string> conditionFields, std::vector<std::string> conditionArguments)
+{
+	std::string sqlQuery = "DELETE FROM underground_poker." + tableName;
+	if (conditionFields.size() > 0) {
+		sqlQuery += " WHERE ";
+		for (int i = 0; i < conditionFields.size(); i++) {
+			sqlQuery += (conditionFields.at(i) + "=?");
+			if(i!=conditionFields.size()-1)
+				sqlQuery += " AND ";
+		}
+	}
+	sqlQuery += ";";
+	std::cout << "Preparing query..." << std::endl;
+	std::cout << "Query:" << sqlQuery;
+	try {
+		sql::PreparedStatement *prepared_statement = NULL;
+		prepared_statement = this->sql_connection->prepareStatement(sqlQuery);
+		for (int i = 0; i < conditionArguments.size(); i++) {
+			if (conditionArguments.at(i).find_first_not_of("0123456789") == std::string::npos) {
+				prepared_statement->setInt(i, stoi(conditionArguments.at(i)));
+			}
+			else {
+				prepared_statement->setString(i+1, conditionArguments.at(i));
+			}
+		}
+		std::cout << "Executing..." << std::endl;
+		prepared_statement->execute();
+		delete prepared_statement;
+	}
+	catch (sql::SQLException e) {
+		std::cout << "Caught exception" << std::endl;
+		std::cout << "SQL state:" << e.getSQLState() << std::endl;
+		std::cout << "SQL EC:" << e.getErrorCode() << std::endl;
+	}
+}
 void DBConnection::ExecuteQuery_Insert_Blank(std::string tableName,std::string autoIncrementName)
 {
 	std::string sqlQuery = "INSERT INTO " + (std::string)DB_DATABASE + "." + tableName + " (" + autoIncrementName + ") VALUES(null);";

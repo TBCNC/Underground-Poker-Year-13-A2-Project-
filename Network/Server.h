@@ -1,4 +1,6 @@
 #pragma once
+#include "../Network/DBConnection.h"
+#include "../Network/PasswordHash.h"
 #include "Dealer.h"
 #include <iostream>
 #include "PacketHandler.h"
@@ -23,12 +25,13 @@ struct Connection {
 };
 class Server {
 public:
-	Server(int portNum);
+	Server(std::string name, int portNum, bool competitive=false, std::string password="");
+	~Server();
 	void Start();
 	//std::map<TcpSocket*, Player> connectedClients;
 	std::vector<Connection> connectedClients;
 	int currentPlayers = 0;
-
+	void AddToDB();
 	void StartGame();
 	bool NextTurn();
 	void PerformFold(Player *player);
@@ -47,7 +50,11 @@ private:
 	int turnCounter = 0;//When this reaches the length of the list-outcounter, all players have played and we deal out more cards.
 	int currentTurnIndex = 0;
 	int totalJackpot = 0;
+	bool competitive = false;
 	Dealer deal = Dealer(52);
+	std::string name;
+	std::string password;
+	int port;
 };
 
 #endif // !

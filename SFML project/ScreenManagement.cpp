@@ -9,7 +9,7 @@
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
-	//auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
 	//this->menus.push_back(loginMenu);
@@ -34,7 +34,7 @@ void ScreenManagement::HandleTGUIEvents()
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
-			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!") {
+			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!" || TGUIEventHandler::events.at(c)->arguments.at(0)=="This user does not exist!") {
 				MenuStructure loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(loginMenu);
 				currentMenu = MenuTypes::LOG_IN_MENU;
@@ -63,12 +63,18 @@ void ScreenManagement::HandleTGUIEvents()
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 			//std::cout << TGUIEventHandler::events.at(c)->arguments.at(0) << std::endl;
 			UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0));
-			if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
-				MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-				AddMenu(msgBox);
+			if (login_account.UserExist()) {
+				if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
+					MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgBox);
+				}
+				else {
+					MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgBox);
+				}
 			}
 			else {
-				MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				MenuStructure msgBox = GameMenus::MessageBox("This user does not exist!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(msgBox);
 			}
 			currentMenu = MenuTypes::MESSAGE_BOX;
@@ -121,6 +127,8 @@ void ScreenManagement::HandleSFMLEvents() {
 			AddMenu(quitBox);
 			currentMenu = MenuTypes::MESSAGE_BOX;
 		}
+	}else if(currentMenu == MenuTypes::POKER_GAME) {
+		//auto game = this->menus.at(1);
 	}
 }
 void ScreenManagement::UpdateScreen() {
