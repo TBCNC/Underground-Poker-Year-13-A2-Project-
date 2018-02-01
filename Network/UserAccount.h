@@ -16,11 +16,11 @@ public:
 	bool UserExist();
 	sf::String username = "";
 	int UID = 0;
+	int ELO;
 	bool CreateAccount(sf::String password,sf::String email);
 private:
 	sf::String GetPasswordHash();
 	std::string GetProfilePicture();
 	void RetrieveInformation();
-	int ELO;
 	sf::Image profilePicture;
 };

@@ -12,6 +12,7 @@ class Dealer{
     Dealer(int cardSize);
     void Shuffle();
     void DealCard(Player *player);
+	void DealCard(Hand *hand);
     Hand cards;
   private:
     int cardSize;

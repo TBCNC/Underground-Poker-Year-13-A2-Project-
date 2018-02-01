@@ -2,6 +2,7 @@
 
 Player::Player(UserAccount user) {
 	this->user = user;
+	this->eloRank = user.ELO;
 }
 void Player::Fold() {
 	this->playing = false;

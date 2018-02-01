@@ -12,5 +12,6 @@ enum PacketType : int {
 	MOVE_REQUIRED=9,
 	HAND_INFORMATION=10,
 	ALL_PLAYERS=11,
+	TABLE_CARDS=12,
 };
 

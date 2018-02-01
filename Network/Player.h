@@ -14,6 +14,6 @@ public:
 	Hand hand;
 	bool playing = true;
 	UserAccount user;
-	int points;
+	int points=2000;
 private:
 };

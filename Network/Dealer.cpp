@@ -18,6 +18,12 @@ void Dealer::DealCard(Player *player){
 	this->cards.cards.erase(this->cards.cards.begin());
 	this->cards.cards.push_back(card);
 }
+void Dealer::DealCard(Hand *hand) {
+	Card card = this->cards.cards.at(0);
+	hand->cards.push_back(card);
+	this->cards.cards.erase(this->cards.cards.begin());
+	this->cards.cards.push_back(card);
+}
 Hand Dealer::GeneratePack(){
   Hand deck;
   int roundCounter=1;

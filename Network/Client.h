@@ -20,6 +20,5 @@ private:
 	Player player=Player(UserAccount(1));//Need this initializer to prevent crashing
 	int UID;
 	bool firstPlayerList = true;
-	std::vector<std::string> Split(std::string &numeral, char delimeter);
 	std::vector<Player> enemies;
 };

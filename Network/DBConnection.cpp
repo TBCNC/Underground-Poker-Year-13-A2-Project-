@@ -4,9 +4,7 @@ DBConnection::DBConnection() {
 	//std::cout << "Connecting..." << std::endl;
 	this->sql_driver = sql::mysql::get_mysql_driver_instance();
 	this->sql_connection = this->sql_driver->connect("tcp://82.34.216.42:3306", DB_USERNAME, DB_PASSWORD);
-	if (this->sql_connection->isValid())
-		std::cout << "Connected to MySQL server!" << std::endl;
-	else
+	if (!this->sql_connection->isValid())
 		std::cout << "Uh oh!" << std::endl;
 
 }

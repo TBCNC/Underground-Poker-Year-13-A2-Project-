@@ -21,7 +21,6 @@ void Client::ListenForData() {
 			if (this->listener.isReady(this->connection)) {
 				//We have some new data, let's get it now.
 				Packet newData;
-				std::cout << "Receiving new data!" << std::endl;
 				if (this->connection.receive(newData) != Socket::Done) {
 					std::cout << "Error?" << std::endl;
 				}
@@ -72,13 +71,30 @@ void Client::ProcessPacket(PacketHandler packet) {
 		std::cout << "Got some cards! Payload:" << packet.payload << std::endl;
 	}
 	else if (type == MOVE_REQUIRED) {
-		std::cout << "You need to make a move!\n[1] Fold\nEnter option:" << std::endl;
+		std::cout << "You need to make a move!\n[1] Fold\n[2] Call\n[3]RaiseEnter option:" << std::endl;
 		std::string option;
 		std::cin >> option;
 		if (option == "1") {
-			PacketHandler packet(PacketType::MOVE_FOLD, "");
-			packet.SendPacket(&this->connection);
+			PacketHandler newpacket(PacketType::MOVE_FOLD, "");
+			newpacket.SendPacket(&this->connection);
 			std::cout << "Sent fold request." << std::endl;
 		}
+		else if (option == "2") {
+			std::string points;
+			std::cout << "Raise by how many points:";
+			std::cin >> points;
+			PacketHandler newpacket(PacketType::MOVE_CALL, points);
+			newpacket.SendPacket(&this->connection);
+		}
+		else if (option == "3") {
+			std::string points;
+			std::cout << "Raise by how many points:";
+			std::cin >> points;
+			PacketHandler newPacket(PacketType::MOVE_RAISE, points);
+			newPacket.SendPacket(&this->connection);
+		}
+	}
+	else if (type == TABLE_CARDS) {
+		std::cout << "Cards on table:" << packet.payload << std::endl;
 	}
 }

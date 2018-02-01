@@ -1,31 +1,52 @@
 #include "Server.h"
 
 void Server::StartGame() {
-	for (int c = 0; c < connectedClients.size(); c++) {
-		deal.DealCard(&connectedClients.at(c).player);
-		deal.DealCard(&connectedClients.at(c).player);
-		std::string payload = std::to_string(connectedClients.at(c).player.hand.cards.at(0).card_suit) + std::to_string(connectedClients.at(c).player.hand.cards.at(0).card_value) + ","
-			+ std::to_string(connectedClients.at(c).player.hand.cards.at(1).card_suit) + std::to_string(connectedClients.at(c).player.hand.cards.at(1).card_value);
-		PacketHandler packet(PacketType::HAND_INFORMATION, payload);
-		packet.SendPacket(connectedClients.at(c).socket);
-	}
-	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
-	packet.SendPacket(connectedClients.at(turnCounter).socket);
-}
-bool Server::RoundOver() {//Check whether the round is over due to folds
-	int foldCount = 0;
 	for (int c = 0; c < playingGame.size(); c++) {
-		if (!playingGame.at(c).player.playing)
-			foldCount++;
+		deal.DealCard(&playingGame.at(c).player);
+		deal.DealCard(&playingGame.at(c).player);
+		std::string payload = std::to_string(playingGame.at(c).player.hand.cards.at(0).card_suit) + std::to_string(playingGame.at(c).player.hand.cards.at(0).card_value) + ","
+			+ std::to_string(playingGame.at(c).player.hand.cards.at(1).card_suit) + std::to_string(playingGame.at(c).player.hand.cards.at(1).card_value);
+		PacketHandler packet(PacketType::HAND_INFORMATION, payload);
+		packet.SendPacket(playingGame.at(c).socket);
 	}
-	return foldCount == playingGame.size() - 2;
-}
-bool Server::NextTurn() {
-	if (RoundOver())
-		return false;
 	PacketHandler packet(PacketType::MOVE_REQUIRED, "");
 	packet.SendPacket(playingGame.at(currentTurnIndex).socket);
-	return true;
+}
+bool Server::NextTurn() {
+	std::cout << "Carrying out next turn..." << std::endl;
+	if (playingGame.size()==1)
+		return false;
+	if (currentTurnIndex != playingGame.size()) {
+		PacketHandler packet(PacketType::MOVE_REQUIRED, "");
+		packet.SendPacket(playingGame.at(currentTurnIndex).socket);
+		return true;
+	}
+	else {
+		if (this->tableCards.cards.size() != 5) {
+			if (startThree) {
+				for (int c = 0; c < 3; c++) {
+					this->deal.DealCard(&this->tableCards);
+				}
+				startThree = false;
+			}
+			else {
+				this->deal.DealCard(&this->tableCards);
+			}
+			std::string fullPayload;
+			for (int c = 0; c < this->tableCards.cards.size(); c++) {
+				fullPayload += std::to_string(tableCards.cards.at(c).card_suit) + std::to_string(tableCards.cards.at(c).card_value);
+				fullPayload += ",";
+			}
+			PacketHandler packet(PacketType::TABLE_CARDS, fullPayload);
+			SendToAll(packet);
+			PacketHandler packet2(PacketType::MOVE_REQUIRED, "");
+			currentTurnIndex = 0;
+			packet2.SendPacket(this->playingGame.at(currentTurnIndex).socket);
+		}
+		else {
+			//Determine winner
+		}
+	}
 }
 void Server::PerformFold(Player *player) {
 	player->Fold();

@@ -49,9 +49,6 @@ void Server::Start() {
 						newConn.player = Player(account);
 						newConn.socket = newClient;
 						connectedClients.push_back(newConn);
-						if (!gameOnline) {
-							playingGame.push_back(newConn);
-						}
 					}
 					else {
 						newClient->disconnect();
@@ -73,11 +70,7 @@ void Server::Start() {
 					}
 				}
 			}
-			if (this->currentPlayers >= 4 && !gameOnline) {
-				std::cout << "Starting game!" << std::endl;
-				gameOnline = true;
-				StartGame();
-			}
+			
 		}
 	}
 }
@@ -98,8 +91,15 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 			payload += ",";
 		}
 		PacketHandler packetToSend(PacketType::ALL_PLAYERS, payload);
-		Connection conn;
-		SendToAll(packetToSend, conn);
+		SendToAll(packetToSend); 
+		if (this->currentPlayers >= 2 && !gameOnline) {
+			std::cout << "Starting game!" << std::endl;
+			PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "The game is about to start!");
+			SendToAll(packetToSend);
+			gameOnline = true;
+			currentTurnIndex = 0;
+			StartGame();
+		}
 	}
 	else if (type == PacketType::MOVE_FOLD) {
 		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to fold!" << std::endl;
@@ -109,6 +109,21 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		if (NextTurn()) {
 			std::cout << "Waiting for next turn..." << std::endl;
 		}
+		else {
+			std::cout << "The round is now over." << std::endl;
+			currentTurnIndex++;
+			std::cout << "The winner is " << playingGame.at(currentTurnIndex).player.user.username.toAnsiString() << std::endl;
+			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex).player.user.username.toAnsiString());
+			SendToAll(winnerPacket);
+		}
+	}
+	else if (type == PacketType::MOVE_CALL) {
+		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to call!" << std::endl;
+		PerformCall(&this->connectedClients.at(sourceIndex).player,stoi(packet.payload));
+		startThree = true;
+		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + " has called (" + packet.payload + " points)!");
+		SendToAll(packetToSend, this->connectedClients.at(sourceIndex));
+		NextTurn();
 	}
 }
 void Server::SendToAll(PacketHandler packet, Connection exclusion) {

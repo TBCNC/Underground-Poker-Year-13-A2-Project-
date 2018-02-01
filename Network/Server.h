@@ -20,15 +20,17 @@ enum GameType : int{
 	TEXAS_HOLD_EM=1,
 };
 struct Connection {
+	Connection() :player(Player(UserAccount(0))) {
+
+	}
 	TcpSocket* socket;
-	Player player = Player(UserAccount(0));
+	Player player;
 };
 class Server {
 public:
 	Server(std::string name, int portNum, bool competitive=false, std::string password="");
 	~Server();
 	void Start();
-	//std::map<TcpSocket*, Player> connectedClients;
 	std::vector<Connection> connectedClients;
 	int currentPlayers = 0;
 	void AddToDB();
@@ -42,22 +44,22 @@ public:
 private:
 	TcpListener serverSocket;
 	SocketSelector serverSelector;
+	std::string name;
+	std::string password;
+	std::vector<Connection> playingGame;
+	Hand tableCards;
+	int port;
+	void SendToAll(PacketHandler packet, Connection exclusion=Connection());
+	void ProcessPacket(PacketHandler packet, int sourceIndex);
 	bool serverOnline = true;
 	bool gameOnline = false;
-	void SendToAll(PacketHandler packet, Connection exclusion);
-	void ProcessPacket(PacketHandler packet, int sourceIndex);
-	int OutCounter();
 	int turnCounter = 0;//When this reaches the length of the list-outcounter, all players have played and we deal out more cards.
 	int currentTurnIndex = 0;
 	int totalJackpot = 0;
 	int minCall = 10;
 	bool competitive = false;
-	bool RoundOver();
+	bool startThree = true;
 	Dealer deal = Dealer(52);
-	std::string name;
-	std::string password;
-	std::vector<Connection> playingGame;
-	int port;
 };
 
 #endif // !

@@ -8,7 +8,7 @@ HandTypes PokerRanker::RankHand() {
 	int maxOfSameValue = 0;
 	Value maxValue=(Value)0;
 	for (int c = 0; c < 3; c++) {
-		if (DetermineSuitAmount((Suit)c) == 5)
+		if (DetermineSuitAmount((Suit)c) >= 5)
 			flush = true;
 	}
 	for (int i = 0; i < this->hand.cards.size(); i++) {
@@ -79,7 +79,7 @@ int PokerRanker::GetPairAmount() {
 }
 bool PokerRanker::DetermineStraight() {
 	Hand newHand = SortCards();
-	for (int c = 0; c < newHand.cards.size()-1; c++) {
+	for (int c = 0; c < newHand.cards.size()-3; c++) {
 		if (newHand.cards.at(c).card_value == Value::ACE) {
 			if (newHand.cards.at(c + 1).card_value == Value::TEN || newHand.cards.at(c + 1).card_value == Value::TWO)
 				continue;
