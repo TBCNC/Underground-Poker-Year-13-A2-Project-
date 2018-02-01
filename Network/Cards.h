@@ -29,4 +29,16 @@ struct Card {
 };
 struct Hand {
 	std::vector<Card> cards;
+	Hand operator + (Hand const &hand2){
+		std::vector<Card> allCards;
+		for (int c = 0; c < this->cards.size(); c++) {
+			allCards.push_back(this->cards.at(c));
+		}
+		for (int c = 0; c < hand2.cards.size(); c++) {
+			allCards.push_back(hand2.cards.at(c));
+		}
+		Hand newHand;
+		newHand.cards = allCards;
+		return newHand;
+	}
 };

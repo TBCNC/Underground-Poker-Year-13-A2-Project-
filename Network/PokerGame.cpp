@@ -45,6 +45,7 @@ bool Server::NextTurn() {
 		}
 		else {
 			//Determine winner
+			
 		}
 	}
 }
