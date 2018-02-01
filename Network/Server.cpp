@@ -61,7 +61,32 @@ void Server::Start() {
 						std::cout << "New data!" << std::endl;
 						Packet data;
 						if (this->connectedClients.at(c).socket->receive(data) != Socket::Done) {
-							std::cout << "ERROR: There was an error recieving data from this socket." << std::endl;
+							if (this->connectedClients.at(c).socket->receive(data) == Socket::Disconnected) {
+								std::cout << this->connectedClients.at(c).player.user.username.toAnsiString() << " disconnected." << std::endl;
+								if (!gameOnline) {
+									connectedClients.erase(connectedClients.begin() + c);
+									playingGame.erase(playingGame.begin() + c);
+								}
+								else {
+									Connection conn = connectedClients.at(c);
+									for (int i = 0; c < playingGame.size(); i++) {
+										if (conn.socket == playingGame.at(i).socket) {
+											if (currentTurnIndex == i) {
+												currentTurnIndex++;
+												if (NextTurn()) {
+													std::cout << "Waiting for next turn..." << std::endl;
+												}
+												else {
+													//Determine winner
+												}
+											}
+											playingGame.erase(playingGame.begin() + i);
+											break;
+										}
+									}
+									connectedClients.erase(connectedClients.begin() + c);
+								}
+							}
 						}
 						else {
 							PacketHandler packet = PacketHandler::ProcessPacket(data);
@@ -92,7 +117,7 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		}
 		PacketHandler packetToSend(PacketType::ALL_PLAYERS, payload);
 		SendToAll(packetToSend); 
-		if (this->currentPlayers >= 2 && !gameOnline) {
+		if (this->currentPlayers >= 3 && !gameOnline) {
 			std::cout << "Starting game!" << std::endl;
 			PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "The game is about to start!");
 			SendToAll(packetToSend);
@@ -128,7 +153,6 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		}
 		else {
 			std::cout << "The round is now over." << std::endl;
-			currentTurnIndex++;
 			std::cout << "The winner is " << this->winner.player.user.username.toAnsiString() << std::endl;
 			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex).player.user.username.toAnsiString());
 			SendToAll(winnerPacket);
