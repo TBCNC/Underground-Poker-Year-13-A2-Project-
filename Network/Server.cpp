@@ -97,6 +97,7 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 			PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "The game is about to start!");
 			SendToAll(packetToSend);
 			gameOnline = true;
+			startThree = true;
 			currentTurnIndex = 0;
 			StartGame();
 		}
@@ -120,10 +121,18 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 	else if (type == PacketType::MOVE_CALL) {
 		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to call!" << std::endl;
 		PerformCall(&this->connectedClients.at(sourceIndex).player,stoi(packet.payload));
-		startThree = true;
 		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + " has called (" + packet.payload + " points)!");
 		SendToAll(packetToSend, this->connectedClients.at(sourceIndex));
-		NextTurn();
+		if (NextTurn()) {
+			std::cout << "Waiting for next turn..." << std::endl;
+		}
+		else {
+			std::cout << "The round is now over." << std::endl;
+			currentTurnIndex++;
+			std::cout << "The winner is " << this->winner.player.user.username.toAnsiString() << std::endl;
+			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex).player.user.username.toAnsiString());
+			SendToAll(winnerPacket);
+		}
 	}
 }
 void Server::SendToAll(PacketHandler packet, Connection exclusion) {

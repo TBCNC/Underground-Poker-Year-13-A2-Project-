@@ -45,7 +45,21 @@ bool Server::NextTurn() {
 		}
 		else {
 			//Determine winner
-			
+			int minRank = 99999;
+			int minIndex = 99999;
+			for (int c = 0; c < playingGame.size(); c++) {
+				PokerRanker ranker(playingGame.at(c).player.hand + this->tableCards);
+				int curRank = ranker.RankHand();
+				std::cout << playingGame.at(c).player.user.username.toAnsiString() << "'s level:" << curRank << std::endl;
+				if (curRank < minRank) {
+					minRank = curRank;
+					minIndex = c;
+				}
+			}
+			this->winner = this->playingGame.at(minIndex);
+			winner.player.points += this->totalJackpot;
+			this->totalJackpot = 0;
+			return false;
 		}
 	}
 }
@@ -56,9 +70,11 @@ void Server::PerformFold(Player *player) {
 void Server::PerformCall(Player *player, int callAmount) {
 	player->Call(callAmount);
 	currentTurnIndex++;
+	totalJackpot += callAmount;
 }
 void Server::PerformRaise(Player *player, int callAmount) {
 	player->Call(callAmount);
 	this->minCall = callAmount;
+	totalJackpot += callAmount;
 	currentTurnIndex++;
 }

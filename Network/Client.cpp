@@ -71,7 +71,7 @@ void Client::ProcessPacket(PacketHandler packet) {
 		std::cout << "Got some cards! Payload:" << packet.payload << std::endl;
 	}
 	else if (type == MOVE_REQUIRED) {
-		std::cout << "You need to make a move!\n[1] Fold\n[2] Call\n[3]RaiseEnter option:" << std::endl;
+		std::cout << "You need to make a move!\n[1] Fold\n[2] Call\n[3]Raise\nEnter option:";
 		std::string option;
 		std::cin >> option;
 		if (option == "1") {

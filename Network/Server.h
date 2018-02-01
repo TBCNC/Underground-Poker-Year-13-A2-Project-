@@ -1,6 +1,7 @@
 #pragma once
 #include "../Network/DBConnection.h"
 #include "../Network/PasswordHash.h"
+#include "../Network/PokerRanker.h"
 #include "Dealer.h"
 #include <iostream>
 #include "PacketHandler.h"
@@ -48,6 +49,7 @@ private:
 	std::string password;
 	std::vector<Connection> playingGame;
 	Hand tableCards;
+	Connection winner;
 	int port;
 	void SendToAll(PacketHandler packet, Connection exclusion=Connection());
 	void ProcessPacket(PacketHandler packet, int sourceIndex);
