@@ -60,6 +60,7 @@ void UserAccount::RetrieveInformation()
 		else
 			this->username = db.ExecuteQuery_Select("users", { "username" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0);
 		this->ELO = stoi(db.ExecuteQuery_Select("statistics", { "ELO_RANKING" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0));
+		std::cout << "Username is:" << this->username.toAnsiString() << std::endl;
 	}
 }
 std::string UserAccount::GetProfilePicture() {

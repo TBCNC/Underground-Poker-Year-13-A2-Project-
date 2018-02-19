@@ -127,6 +127,11 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 			StartGame();
 		}
 	}
+	else if (type == PacketType::CHAT_MESSAGE) {
+		std::string fullMsg = this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + ":" + packet.payload;
+		PacketHandler packetToSend(PacketType::CHAT_MESSAGE, fullMsg);
+		SendToAll(packetToSend);
+	}
 	else if (type == PacketType::MOVE_FOLD) {
 		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to fold!" << std::endl;
 		PerformFold(&this->connectedClients.at(sourceIndex).player);

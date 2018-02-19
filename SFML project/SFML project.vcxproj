@@ -42,6 +42,7 @@
     <ClInclude Include="PokerGame.h" />
     <ClInclude Include="ScreenManagement.h" />
     <ClInclude Include="ServerList.h" />
+    <ClInclude Include="ServerSetup.h" />
     <ClInclude Include="TGUIEventHandler.h" />
     <ClInclude Include="TGUIEvents.h" />
   </ItemGroup>

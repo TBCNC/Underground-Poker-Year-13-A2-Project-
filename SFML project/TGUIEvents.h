@@ -6,6 +6,7 @@ enum TGUIEvents : int{
 	MESSAGE_BOX_YES=2,
 	MESSAGE_BOX_NO=3,
 	LOG_IN=4,
+	SEND_CHAT_MESSAGE=5,
 };
 struct TGUIEvent
 {

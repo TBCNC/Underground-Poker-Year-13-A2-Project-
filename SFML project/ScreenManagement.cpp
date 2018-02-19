@@ -5,17 +5,23 @@
 #include "Background.h"
 #include "ServerList.h"
 #include "PokerGame.h"
+#include "ServerSetup.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
-	auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
-	//this->menus.push_back(loginMenu);
-	//auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-	//this->menus.push_back(serverList);
-	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	
+	
+	int uid;
+	std::cout << "Enter UID:" << std::endl;
+	std::cin >> uid;
+	Client *client = new Client(uid);
+	this->client = client;
+	std::thread clientThread(&Client::ConnectToServer,this->client,"192.168.0.15",666);
+	clientThread.detach();
+	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, true, &this->pokerBoundaries);
 	this->menus.push_back(poker);
 }
 ScreenManagement::~ScreenManagement()
@@ -30,11 +36,11 @@ void ScreenManagement::HandleTGUIEvents()
 	for(int c=0;c<TGUIEventHandler::events.size();c++)
 	{
 		MenuStructure msgBox2;
-		switch(TGUIEventHandler::events.at(c)->eventType)
+		switch (TGUIEventHandler::events.at(c)->eventType)
 		{
 		case TGUIEvents::MESSAGE_BOX_OK:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
-			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!" || TGUIEventHandler::events.at(c)->arguments.at(0)=="This user does not exist!") {
+			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Failed to log in!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "This user does not exist!") {
 				MenuStructure loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(loginMenu);
 				currentMenu = MenuTypes::LOG_IN_MENU;
@@ -59,28 +65,48 @@ void ScreenManagement::HandleTGUIEvents()
 				currentMenu = MenuTypes::MAIN_MENU;
 			}
 			break;
-		case TGUIEvents::LOG_IN:
-			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
-			//std::cout << TGUIEventHandler::events.at(c)->arguments.at(0) << std::endl;
-			UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0));
-			if (login_account.UserExist()) {
-				if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
-					MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-					AddMenu(msgBox);
+		case TGUIEvents::LOG_IN:{
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				//std::cout << TGUIEventHandler::events.at(c)->arguments.at(0) << std::endl;
+				UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0));
+				if (login_account.UserExist()) {
+					if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
+						this->user = login_account;
+						MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+						AddMenu(msgBox);
+					}
+					else {
+						MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+						AddMenu(msgBox);
+					}
 				}
 				else {
-					MenuStructure msgBox = GameMenus::MessageBox("Failed to log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					MenuStructure msgBox = GameMenus::MessageBox("This user does not exist!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 					AddMenu(msgBox);
 				}
+				currentMenu = MenuTypes::MESSAGE_BOX;
+				break;
 			}
-			else {
-				MenuStructure msgBox = GameMenus::MessageBox("This user does not exist!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-				AddMenu(msgBox);
+			case TGUIEvents::SEND_CHAT_MESSAGE: {
+				std::string chatMsg = TGUIEventHandler::events.at(c)->arguments.at(0);
+				this->client->SendPacketToServer(PacketType::CHAT_MESSAGE, chatMsg);
+				break;
 			}
-			currentMenu = MenuTypes::MESSAGE_BOX;
-			break;
 		}
+		
 		TGUIEventHandler::events.erase(TGUIEventHandler::events.begin() + c);
+	}
+}
+void ScreenManagement::HandleClientEvents() {//Handling what is received
+	for (int c = 0; c < this->client->events.size(); c++) {
+		switch (this->client->events.at(c).type) {
+		case CHAT_MESSAGE:
+			this->chatHistory.push_back(this->client->events.at(c).payload);
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory);
+			AddMenu(newMenu);
+		}
+		this->client->events.erase(this->client->events.begin()+c);
 	}
 }
 void ScreenManagement::AddMenu(MenuStructure menu)
@@ -146,6 +172,8 @@ void ScreenManagement::UpdateScreen() {
 		}
 		if(TGUIEventHandler::events.size()>0)
 			this->HandleTGUIEvents();
+		if (this->client->events.size() > 0)
+			this->HandleClientEvents();
 	}
 	//Graphical drawing
 	this->window_sfml->clear();

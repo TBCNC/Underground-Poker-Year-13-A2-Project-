@@ -1,9 +1,8 @@
-#include "../Network/Client.h"
+#include <iostream>
+#include "../Network/Server.h"
+
 
 int main() {
-	std::cout << "Enter UID:";
-	std::string uid;
-	std::cin >> uid;
-	Client client(std::stoi(uid));
-	client.ConnectToServer("192.168.0.15", 666);
+	Server server("Test server", 666, true);
+	server.Start();
 }

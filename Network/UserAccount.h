@@ -14,7 +14,7 @@ public:
 	UserAccount(sf::String username);
 	bool Login(sf::String password);
 	bool UserExist();
-	sf::String username = "";
+	sf::String username;
 	int UID = 0;
 	int ELO;
 	bool CreateAccount(sf::String password,sf::String email);

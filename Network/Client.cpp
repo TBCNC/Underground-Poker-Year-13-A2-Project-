@@ -1,10 +1,15 @@
 #include "Client.h"
 #include <Windows.h>
 
+Client::Client()
+{
+}
+
 Client::Client(int UID) {
 	this->UID = UID;
-	UserAccount account(UID);
+	UserAccount account(UID,true);
 	this->player = Player(account);
+	std::cout << "Client is using UID " << UID << std::endl;
 }
 
 void Client::ConnectToServer(IpAddress address, int port) {
@@ -12,8 +17,13 @@ void Client::ConnectToServer(IpAddress address, int port) {
 		this->listener.add(this->connection);//Connected to the server
 		connected = true;
 		std::cout << "Connected to server!" << std::endl;
-		this->ListenForData();
+		ListenForData();
 	}
+}
+void Client::SendPacketToServer(PacketType type, std::string payload)
+{
+	PacketHandler packetToSend(type, payload);
+	packetToSend.SendPacket(&this->connection);
 }
 void Client::ListenForData() {
 	while (this->connected) {
@@ -32,17 +42,27 @@ void Client::ListenForData() {
 		}
 	}
 }
+void Client::AddEvent(PacketType type, std::string payload) {
+	ClientEvent event;
+	event.type = type;
+	event.payload = payload;
+	this->events.push_back(event);
+}
 void Client::ProcessPacket(PacketHandler packet) {
 	PacketType type = packet.type;
 	std::string data = packet.payload;
 	if (type == SERVER_MESSAGE) {
 		std::cout << "Message from server:" << packet.payload << std::endl;
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == SUCCESSFUL_CONNECTION) {
 		std::cout << "The server allowed us to connect! Let's send them our info." << std::endl;
 		PacketHandler packet(PacketType::ACCOUNT_EXCHANGE,std::to_string(this->UID));
 		packet.SendPacket(&this->connection);
 		std::cout << "Sent account information." << std::endl;
+		std::cout << "Adding account information to class..." << std::endl;
+		this->player = Player(UserAccount(this->UID));
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == ALL_PLAYERS) {
 		//std::cout << "Got player list" << std::endl;
@@ -63,38 +83,20 @@ void Client::ProcessPacket(PacketHandler packet) {
 		else
 			if(this->enemies.size()!=0)
 				std::cout << this->enemies.at(enemies.size()-1).user.username.toAnsiString() << " connected!" << std::endl;
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == CHAT_MESSAGE) {
-
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == HAND_INFORMATION) {
 		std::cout << "Got some cards! Payload:" << packet.payload << std::endl;
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == MOVE_REQUIRED) {
-		std::cout << "You need to make a move!\n[1] Fold\n[2] Call\n[3]Raise\nEnter option:";
-		std::string option;
-		std::cin >> option;
-		if (option == "1") {
-			PacketHandler newpacket(PacketType::MOVE_FOLD, "");
-			newpacket.SendPacket(&this->connection);
-			std::cout << "Sent fold request." << std::endl;
-		}
-		else if (option == "2") {
-			std::string points;
-			std::cout << "Raise by how many points:";
-			std::cin >> points;
-			PacketHandler newpacket(PacketType::MOVE_CALL, points);
-			newpacket.SendPacket(&this->connection);
-		}
-		else if (option == "3") {
-			std::string points;
-			std::cout << "Raise by how many points:";
-			std::cin >> points;
-			PacketHandler newPacket(PacketType::MOVE_RAISE, points);
-			newPacket.SendPacket(&this->connection);
-		}
+		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == TABLE_CARDS) {
 		std::cout << "Cards on table:" << packet.payload << std::endl;
+		AddEvent(packet.type, packet.payload);
 	}
 }
