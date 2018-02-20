@@ -11,7 +11,7 @@ namespace GameMenus {
 	*/
 	MenuStructure pokerGame;
 	tgui::EditBox::Ptr chatMessageBox = theme->load("EditBox");
-	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<UserAccount*> players = {}, std::vector<float> chipsPerPlayer = {}) {
+	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<float> chipsPerPlayer = {}) {
 
 		//Cards directory resources\poker_cards_chips_2d\PNGs\cards\Set_B\small
 		pokerGame.drawings_sfml.clear();
@@ -55,6 +55,7 @@ namespace GameMenus {
 		chatMessageBox->setPosition(chatBox->getPosition().x, chatBox->getPosition().y + chatBox->getSize().y + chatRectangle->getLocalBounds().height*0.025);
 		chatMessageBox->setFont(*pokerFont);
 		chatMessageBox->setMaximumCharacters(72);
+		chatMessageBox->setText("");
 		chatMessageBox->setDefaultText("Type message here...");
 
 		tgui::Button::Ptr sendMessageButton = theme->load("Button");
@@ -154,6 +155,71 @@ namespace GameMenus {
 			sliderContainer->left = pointSlider->getPosition().x;
 			sliderContainer->top = pointSlider->getPosition().y;
 		}
+		std::vector<sf::Drawable*> playerItems;
+		if (players.size() > 0) {
+			float centreOfTableY = pokerTableGraphic->getLocalBounds().height / 2;
+			float changeConstant = pokerTableGraphic->getLocalBounds().height / 3;
+			for (int c = 0; c < players.size(); c++) {//Max players is 6
+				if (c < 3) {
+					sf::Text *playerText = new sf::Text();
+					playerText->setFont(*pokerFont);
+					playerText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+					playerText->setFillColor(sf::Color::Black);
+					if(c==0||c==2)
+						playerText->setPosition(pokerTableGraphic->getGlobalBounds().left - pokerTableGraphic->getLocalBounds().width*0.1, centreOfTableY - changeConstant + (changeConstant*c));
+					else
+						playerText->setPosition(pokerTableGraphic->getGlobalBounds().left - pokerTableGraphic->getLocalBounds().width*0.2, centreOfTableY - changeConstant + (changeConstant*c));
+					playerText->setString(players.at(c)->user.username);
+					sf::RectangleShape *profilePicture = new sf::RectangleShape();
+					sf::Texture *profileTexture = new sf::Texture();
+					if (!profileTexture->loadFromFile(players.at(c)->user.profilePicture)) {
+						std::cout << "Could not open profile pic" << std::endl;
+					}
+					profilePicture->setSize(sf::Vector2f(64,64));
+					profilePicture->setTexture(profileTexture);
+					profilePicture->setPosition(playerText->getGlobalBounds().left + playerText->getLocalBounds().width / 2 - 32, playerText->getGlobalBounds().top + 32);
+					sf::Text *scoreText = new sf::Text();
+					scoreText->setFont(*pokerFont);
+					scoreText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+					scoreText->setFillColor(sf::Color::Black);
+					scoreText->setString(std::to_string(players.at(c)->points));
+					scoreText->setPosition(playerText->getGlobalBounds().left+playerText->getLocalBounds().width/2-scoreText->getLocalBounds().width/2, profilePicture->getGlobalBounds().top + profilePicture->getLocalBounds().height + 8);
+					
+					playerItems.push_back(playerText);
+					playerItems.push_back(profilePicture);
+					playerItems.push_back(scoreText);
+				}
+				else {
+					sf::Text *playerText = new sf::Text();
+					playerText->setFont(*pokerFont);
+					playerText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+					playerText->setFillColor(sf::Color::Black);
+					if (c == 0 || c == 2)
+						playerText->setPosition(pokerTableGraphic->getGlobalBounds().left + pokerTableGraphic->getLocalBounds().width + pokerTableGraphic->getLocalBounds().width*0.1, centreOfTableY - changeConstant + (changeConstant*c));
+					else
+						playerText->setPosition(pokerTableGraphic->getGlobalBounds().left + pokerTableGraphic->getLocalBounds().width + pokerTableGraphic->getLocalBounds().width*0.2, centreOfTableY - changeConstant + (changeConstant*c));
+					playerText->setString(players.at(c)->user.username);
+					sf::RectangleShape *profilePicture = new sf::RectangleShape();
+					sf::Texture *profileTexture = new sf::Texture();
+					if (!profileTexture->loadFromFile(players.at(c)->user.profilePicture)) {
+						std::cout << "Could not open profile pic" << std::endl;
+					}
+					profilePicture->setSize(sf::Vector2f(64, 64));
+					profilePicture->setTexture(profileTexture);
+					profilePicture->setPosition(playerText->getGlobalBounds().left + playerText->getLocalBounds().width / 2 - 32, playerText->getGlobalBounds().top + 32);
+					sf::Text *scoreText = new sf::Text();
+					scoreText->setFont(*pokerFont);
+					scoreText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+					scoreText->setFillColor(sf::Color::Black);
+					scoreText->setString(std::to_string(players.at(c)->points));
+					scoreText->setPosition(playerText->getGlobalBounds().left + playerText->getLocalBounds().width / 2 - scoreText->getLocalBounds().width / 2, profilePicture->getGlobalBounds().top + profilePicture->getLocalBounds().height + 8);
+
+					playerItems.push_back(playerText);
+					playerItems.push_back(profilePicture);
+					playerItems.push_back(scoreText);
+				}
+			}
+		}
 		pokerGame.drawings_sfml.push_back(chatRectangle);
 		pokerGame.drawings_tgui.push_back(chatBox);
 		pokerGame.drawings_tgui.push_back(chatMessageBox);
@@ -171,9 +237,10 @@ namespace GameMenus {
 			pokerGame.drawings_tgui.push_back(pointSlider);
 			pokerGame.drawings_sfml.push_back(sliderText);
 		}
+		for (int c = 0; c < playerItems.size(); c++) {
+			pokerGame.drawings_sfml.push_back(playerItems.at(c));
+		}
 		return pokerGame;
 	}
-	std::vector<sf::FloatRect> GetFloatBoxes_Poker(int screenWidth, int screenHeight) {
-		
-	}
+
 }

@@ -18,9 +18,9 @@ public:
 	int UID = 0;
 	int ELO;
 	bool CreateAccount(sf::String password,sf::String email);
+	std::string profilePicture;//Location of profile pic texture
 private:
 	sf::String GetPasswordHash();
 	std::string GetProfilePicture();
 	void RetrieveInformation();
-	sf::Image profilePicture;
 };

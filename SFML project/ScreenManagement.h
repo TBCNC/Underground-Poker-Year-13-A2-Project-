@@ -39,6 +39,7 @@ private:
 	int FindIndexOfMenu(MenuStructure menu);
 	std::vector<sf::FloatRect> pokerBoundaries;//Used when in game
 	std::vector<std::string> chatHistory;//Used when in game
+	std::vector<Player*> currentPlayers;//Used when in game
 	bool usersTurn = false;//Used when in game
 	MenuTypes currentMenu;
 	sf::RenderWindow *window_sfml;

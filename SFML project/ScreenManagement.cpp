@@ -8,20 +8,29 @@
 #include "ServerSetup.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
+
+
+	this->client = client;
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
-	
+	//auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	//this->menus.push_back(loginMenu);
 	
 	int uid;
-	std::cout << "Enter UID:" << std::endl;
+	std::cout << "Enter UID:";
 	std::cin >> uid;
 	Client *client = new Client(uid);
 	this->client = client;
 	std::thread clientThread(&Client::ConnectToServer,this->client,"192.168.0.15",666);
 	clientThread.detach();
-	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, true, &this->pokerBoundaries);
+	
+	/*UserAccount *userAccount1 = new UserAccount(1, true);
+	UserAccount *userAccount2 = new UserAccount(2, true);
+	UserAccount *userAccount3 = new UserAccount(3, true);*/
+
+	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries);
 	this->menus.push_back(poker);
 }
 ScreenManagement::~ScreenManagement()
@@ -100,11 +109,32 @@ void ScreenManagement::HandleTGUIEvents()
 void ScreenManagement::HandleClientEvents() {//Handling what is received
 	for (int c = 0; c < this->client->events.size(); c++) {
 		switch (this->client->events.at(c).type) {
-		case CHAT_MESSAGE:
+		case CHAT_MESSAGE: {
 			this->chatHistory.push_back(this->client->events.at(c).payload);
 			RemoveMenu(this->menus.at(1));
-			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory);
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory,this->currentPlayers);
 			AddMenu(newMenu);
+			break;
+		}
+		case ALL_PLAYERS: {
+			std::cout << "A player has connected." << std::endl;
+			std::stringstream stream(this->client->events.at(c).payload);
+			std::string item;
+			std::vector<std::string> uids;
+			while (getline(stream, item, ',')) {
+				uids.push_back(item);
+			}
+			std::vector<Player*> players;
+			for (int i = 0; i < uids.size(); i++) {
+				std::cout << "Adding UID " << uids.at(i) << std::endl;
+				Player *newPlayer = new Player(UserAccount(std::stoi(uids.at(i)),true));
+				players.push_back(newPlayer);
+			}
+			this->currentPlayers = players;
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers);
+			AddMenu(newMenu);
+		}
 		}
 		this->client->events.erase(this->client->events.begin()+c);
 	}
@@ -137,7 +167,6 @@ void ScreenManagement::HandleSFMLEvents() {
 		if (boxes.at(0).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Play button pressed
 			std::cout << "User wants to play!" << std::endl;
 			auto serverList = GameMenus::ServerList(window_sfml->getSize().x, window_sfml->getSize().y);
-			//RemoveMenu(this->menus.at(FindIndexOfMenu(GameMenus::MainMenu(window_sfml->getSize().x, window_sfml->getSize().y)))); Causing exception, fix later.
 			RemoveMenu(this->menus.at(1));
 			AddMenu(serverList);
 			currentMenu = MenuTypes::SERVER_LIST;
@@ -148,7 +177,6 @@ void ScreenManagement::HandleSFMLEvents() {
 		else if (boxes.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Quit button pressed
 			std::cout << "User wants to quit." << std::endl;
 			auto quitBox = GameMenus::MessageBox("Are you sure you want to quit?", GameMenus::MessageType::WARNING, GameMenus::BoxType::YESNO, window_sfml->getSize().x, window_sfml->getSize().y);
-			//RemoveMenu(this->menus.at(FindIndexOfMenu(GameMenus::MainMenu(window_sfml->getSize().x,window_sfml->getSize().y))));//Should always be second index but implementing check anyway. Broken, fix later
 			RemoveMenu(this->menus.at(1));
 			AddMenu(quitBox);
 			currentMenu = MenuTypes::MESSAGE_BOX;
@@ -159,27 +187,32 @@ void ScreenManagement::HandleSFMLEvents() {
 }
 void ScreenManagement::UpdateScreen() {
 	//Event polling
-	sf::Event event;
-	while (this->window_sfml->pollEvent(event)) {
-		if (event.type == sf::Event::Closed) {
-			this->window_sfml->close();
-		}
-		this->window_tgui->handleEvent(event);
-		if (event.type==sf::Event::MouseButtonPressed) {
-			if (event.mouseButton.button == sf::Mouse::Left && TGUIEventHandler::events.size()==0) {
-				HandleSFMLEvents();
+	try {
+		sf::Event event;
+		while (this->window_sfml->pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				this->window_sfml->close();
 			}
+			this->window_tgui->handleEvent(event);
+			if (event.type == sf::Event::MouseButtonPressed) {
+				if (event.mouseButton.button == sf::Mouse::Left && TGUIEventHandler::events.size() == 0) {
+					HandleSFMLEvents();
+				}
+			}
+			if (TGUIEventHandler::events.size() > 0)
+				this->HandleTGUIEvents();
+			if (this->client->events.size() > 0)
+				this->HandleClientEvents();
 		}
-		if(TGUIEventHandler::events.size()>0)
-			this->HandleTGUIEvents();
-		if (this->client->events.size() > 0)
-			this->HandleClientEvents();
+		//Graphical drawing
+		this->window_sfml->clear();
+		this->DrawSFML();
+		this->window_tgui->draw();
+		this->window_sfml->display();
 	}
-	//Graphical drawing
-	this->window_sfml->clear();
-	this->DrawSFML();
-	this->window_tgui->draw();
-	this->window_sfml->display();
+	catch (...) {
+		std::cout << "Oh fuck" << std::endl;
+	}
 }
 void ScreenManagement::DrawSFML() {
 	for (int menuCounter = 0; menuCounter < this->menus.size(); menuCounter++) {

@@ -8,6 +8,7 @@ UserAccount::UserAccount(int UID, bool retrieveInfo) {
 	this->UID = UID;
 	if(retrieveInfo)
 		RetrieveInformation();
+	this->profilePicture = "resources/profilePic.png";
 }
 UserAccount::UserAccount(sf::String username) {
 	this->username = username;

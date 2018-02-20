@@ -7,7 +7,7 @@ Client::Client()
 
 Client::Client(int UID) {
 	this->UID = UID;
-	UserAccount account(UID,true);
+	UserAccount account(UID);
 	this->player = Player(account);
 	std::cout << "Client is using UID " << UID << std::endl;
 }
@@ -61,7 +61,7 @@ void Client::ProcessPacket(PacketHandler packet) {
 		packet.SendPacket(&this->connection);
 		std::cout << "Sent account information." << std::endl;
 		std::cout << "Adding account information to class..." << std::endl;
-		this->player = Player(UserAccount(this->UID));
+		this->player = Player(UserAccount(this->UID,true));
 		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == ALL_PLAYERS) {
@@ -73,16 +73,6 @@ void Client::ProcessPacket(PacketHandler packet) {
 			//std::cout << "Adding:" << item << std::endl;
 			uids.push_back(item);
 		}
-		for (int c = 0; c < uids.size(); c++) {
-			if(uids.at(c)!="")
-				if(stoi(uids.at(c)) != this->UID)
-					this->enemies.push_back(Player(UserAccount(stoi(uids.at(c)),true)));
-		}
-		if (this->firstPlayerList)
-			firstPlayerList = false;
-		else
-			if(this->enemies.size()!=0)
-				std::cout << this->enemies.at(enemies.size()-1).user.username.toAnsiString() << " connected!" << std::endl;
 		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == CHAT_MESSAGE) {
