@@ -11,7 +11,43 @@ namespace GameMenus {
 	*/
 	MenuStructure pokerGame;
 	tgui::EditBox::Ptr chatMessageBox = theme->load("EditBox");
-	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<float> chipsPerPlayer = {}) {
+	std::string GetCardTexture(Card card, bool small=true) {//Returns the file destination for the cards
+		std::string initialDir;
+		if (small)
+			initialDir = "resources\\poker_cards_chips_2d\\PNGs\\cards\\Set_B\\small\\";
+		else
+			initialDir = "resources\\poker_cards_chips_2d\\PNGs\\cards\\Set_B\\large\\";
+		std::string suitIndicator="";
+		switch (card.card_suit) {
+		case CLUBS:
+			suitIndicator = "c";
+			break;
+		case HEARTS:
+			suitIndicator = "h";
+		case DIAMONDS:
+			suitIndicator = "d";
+		case SPADES:
+			suitIndicator = "s";
+		}
+		std::string cardValue = "";
+		if (card.card_value > 10) {
+			if (card.card_value == JACK)
+				cardValue = "j";
+			else if (card.card_value == QUEEN)
+				cardValue = "q";
+			else if (card.card_value == KING)
+				cardValue = "k";
+		}
+		else if (card.card_value == 1)
+			cardValue = "a";
+		else
+			cardValue = std::to_string(card.card_value);
+		if (small)
+			return initialDir + "card_b_" + suitIndicator + cardValue + ".png";
+		else
+			return initialDir + "card_b_" + suitIndicator + cardValue + "_large.png";
+	}
+	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<Card> cards_player = {}, std::vector<Card> cards_table = {}, std::vector<float> chipsPerPlayer = {}) {
 
 		//Cards directory resources\poker_cards_chips_2d\PNGs\cards\Set_B\small
 		pokerGame.drawings_sfml.clear();
@@ -87,11 +123,19 @@ namespace GameMenus {
 
 		sf::RectangleShape *playerCard1 = new sf::RectangleShape();
 		sf::RectangleShape *playerCard2 = new sf::RectangleShape();
-		playerCard1->setTexture(cardTexture); playerCard2->setTexture(cardTexture);
+		//playerCard1->setTexture(cardTexture); playerCard2->setTexture(cardTexture);
 		playerCard1->setSize(sf::Vector2f(screenWidth*0.1, screenHeight*0.45));
 		playerCard2->setSize(sf::Vector2f(screenWidth*0.1, screenHeight*0.45));
 		playerCard1->setPosition(chatRectangle->getGlobalBounds().left + chatRectangle->getGlobalBounds().width + screenWidth*0.05, chatRectangle->getGlobalBounds().top);
 		playerCard2->setPosition(chatRectangle->getGlobalBounds().left + chatRectangle->getGlobalBounds().width + screenWidth*0.08, chatRectangle->getGlobalBounds().top);
+		if (cards_player.size() > 0) {
+			sf::Texture *card1Text = new sf::Texture();
+			sf::Texture *card2Text = new sf::Texture();
+			card1Text->loadFromFile(GetCardTexture(cards_player.at(0), false));
+			card2Text->loadFromFile(GetCardTexture(cards_player.at(1), false));
+			playerCard1->setTexture(card1Text);
+			playerCard2->setTexture(card2Text);
+		}
 
 		sf::RectangleShape *foldButton = new sf::RectangleShape();
 		foldButton->setFillColor(sf::Color(255,255,255,255*0.8));
@@ -225,8 +269,9 @@ namespace GameMenus {
 		pokerGame.drawings_tgui.push_back(chatMessageBox);
 		pokerGame.drawings_tgui.push_back(sendMessageButton);
 		pokerGame.drawings_sfml.push_back(pokerTableGraphic);
-		//pokerGame.drawings_sfml.push_back(playerCard1);
-		//pokerGame.drawings_sfml.push_back(playerCard2);
+		if(cards_player.size()>0)
+			pokerGame.drawings_sfml.push_back(playerCard1);
+			pokerGame.drawings_sfml.push_back(playerCard2);
 		if (userTurn) {
 			pokerGame.drawings_sfml.push_back(foldButton);
 			pokerGame.drawings_sfml.push_back(callButton);

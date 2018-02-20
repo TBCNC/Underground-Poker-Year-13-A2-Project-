@@ -8,8 +8,6 @@
 #include "ServerSetup.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
-
-
 	this->client = client;
 	this->window_sfml = window_sfml;
 	this->window_tgui = window_tgui;
@@ -112,7 +110,14 @@ void ScreenManagement::HandleClientEvents() {//Handling what is received
 		case CHAT_MESSAGE: {
 			this->chatHistory.push_back(this->client->events.at(c).payload);
 			RemoveMenu(this->menus.at(1));
-			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory,this->currentPlayers);
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory,this->currentPlayers,this->userCards);
+			AddMenu(newMenu);
+			break;
+		}
+		case SERVER_MESSAGE: {
+			this->chatHistory.push_back(this->client->events.at(c).payload);
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards);
 			AddMenu(newMenu);
 			break;
 		}
@@ -127,13 +132,45 @@ void ScreenManagement::HandleClientEvents() {//Handling what is received
 			std::vector<Player*> players;
 			for (int i = 0; i < uids.size(); i++) {
 				std::cout << "Adding UID " << uids.at(i) << std::endl;
-				Player *newPlayer = new Player(UserAccount(std::stoi(uids.at(i)),true));
+				Player *newPlayer = new Player(UserAccount(std::stoi(uids.at(i)), true));
 				players.push_back(newPlayer);
 			}
 			this->currentPlayers = players;
 			RemoveMenu(this->menus.at(1));
-			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers);
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers,this->userCards);
 			AddMenu(newMenu);
+			break;
+		}
+		case HAND_INFORMATION: {
+			//Suit then val
+			std::stringstream stream(this->client->events.at(c).payload);
+			std::string item;
+			std::vector<std::string> cards;
+			while (getline(stream, item, ',')) {
+				cards.push_back(item);
+			}
+			this->userCards.clear();
+			for (int c = 0; c < cards.size(); c++) {
+				Card newCard;
+				newCard.card_suit = (Suit)(cards.at(c)[0]-'0');
+				int cardval = std::stoi(cards.at(c).substr(1, strlen(cards.at(c).c_str())-1));
+				std::cout << cardval << std::endl;
+				newCard.card_value = (Value)cardval;
+				std::cout << "Added card of suit " << newCard.card_suit << " and value " << newCard.card_value << std::endl;
+				this->userCards.push_back(newCard);
+			}
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards);
+			AddMenu(newMenu);
+			break;
+		}
+		case MOVE_REQUIRED: {
+			this->chatHistory.push_back("It's your turn!");
+			this->usersTurn = true;
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards);
+			AddMenu(newMenu);
+			break;
 		}
 		}
 		this->client->events.erase(this->client->events.begin()+c);

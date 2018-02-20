@@ -40,6 +40,8 @@ private:
 	std::vector<sf::FloatRect> pokerBoundaries;//Used when in game
 	std::vector<std::string> chatHistory;//Used when in game
 	std::vector<Player*> currentPlayers;//Used when in game
+	std::vector<Card> userCards;
+	std::vector<Card> tableCards;
 	bool usersTurn = false;//Used when in game
 	MenuTypes currentMenu;
 	sf::RenderWindow *window_sfml;

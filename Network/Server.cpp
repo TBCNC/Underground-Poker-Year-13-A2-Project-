@@ -124,7 +124,7 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		}
 		PacketHandler packetToSend(PacketType::ALL_PLAYERS, payload);
 		SendToAll(packetToSend); 
-		if (this->currentPlayers >= 3 && !gameOnline) {
+		if (this->currentPlayers >= 2 && !gameOnline) {
 			std::cout << "Starting game!" << std::endl;
 			PacketHandler packetToSend(PacketType::SERVER_MESSAGE, "The game is about to start!");
 			SendToAll(packetToSend);
