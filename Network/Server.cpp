@@ -86,6 +86,13 @@ void Server::Start() {
 									}
 									connectedClients.erase(connectedClients.begin() + c);
 								}
+								std::string payload = "";
+								for (int c = 0; c < this->connectedClients.size(); c++) {
+									payload += std::to_string(connectedClients.at(c).player.user.UID);
+									payload += ",";
+								}
+								PacketHandler packetToSend(ALL_PLAYERS, payload);
+								SendToAll(packetToSend);
 							}
 						}
 						else {
