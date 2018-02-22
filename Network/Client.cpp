@@ -65,14 +65,6 @@ void Client::ProcessPacket(PacketHandler packet) {
 		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == ALL_PLAYERS) {
-		//std::cout << "Got player list" << std::endl;
-		std::stringstream stream(packet.payload);
-		std::string item;
-		std::vector<std::string> uids;
-		while (getline(stream, item, ',')) {
-			//std::cout << "Adding:" << item << std::endl;
-			uids.push_back(item);
-		}
 		AddEvent(packet.type, packet.payload);
 	}
 	else if (type == CHAT_MESSAGE) {
@@ -87,6 +79,10 @@ void Client::ProcessPacket(PacketHandler packet) {
 	}
 	else if (type == TABLE_CARDS) {
 		std::cout << "Cards on table:" << packet.payload << std::endl;
+		AddEvent(packet.type, packet.payload);
+	}
+	else if (type == MOVE_FOLD) {
+		std::cout << "A player has folded." << std::endl;
 		AddEvent(packet.type, packet.payload);
 	}
 }

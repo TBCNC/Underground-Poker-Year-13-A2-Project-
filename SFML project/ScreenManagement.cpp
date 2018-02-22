@@ -30,6 +30,7 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 
 	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries);
 	this->menus.push_back(poker);
+	this->currentMenu = MenuTypes::POKER_GAME;
 }
 ScreenManagement::~ScreenManagement()
 {
@@ -97,6 +98,9 @@ void ScreenManagement::HandleTGUIEvents()
 			case TGUIEvents::SEND_CHAT_MESSAGE: {
 				std::string chatMsg = TGUIEventHandler::events.at(c)->arguments.at(0);
 				this->client->SendPacketToServer(PacketType::CHAT_MESSAGE, chatMsg);
+				break;
+			}
+			case TGUIEvents::SLIDER_CHANGED: {
 				break;
 			}
 		}
@@ -172,6 +176,19 @@ void ScreenManagement::HandleClientEvents() {//Handling what is received
 			AddMenu(newMenu);
 			break;
 		}
+		case MOVE_FOLD: {
+			std::cout << "A player has folded." << std::endl;
+			for (int i = 0; i < this->currentPlayers.size(); i++) {
+				if (this->currentPlayers.at(i)->user.UID == std::stoi(this->client->events.at(c).payload)) {
+					this->currentPlayers.at(i)->playing = false;
+					break;
+				}
+			}
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards);
+			AddMenu(newMenu);
+			break;
+		}
 		}
 		this->client->events.erase(this->client->events.begin()+c);
 	}
@@ -218,29 +235,45 @@ void ScreenManagement::HandleSFMLEvents() {
 			AddMenu(quitBox);
 			currentMenu = MenuTypes::MESSAGE_BOX;
 		}
-	}else if(currentMenu == MenuTypes::POKER_GAME) {
-		//auto game = this->menus.at(1);
+	}
+	else{
+		if (this->usersTurn) {
+			if (this->pokerBoundaries.at(0).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
+				std::cout << "User wants to fold!" << std::endl;
+				this->usersTurn = false;
+				this->client->SendPacketToServer(PacketType::MOVE_FOLD, "");
+			}
+			else if (this->pokerBoundaries.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
+				std::cout << "User wants to call!" << std::endl;
+			}
+			else if (this->pokerBoundaries.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
+				std::cout << "User wants to raise!" << std::endl;
+			}
+		}
 	}
 }
 void ScreenManagement::UpdateScreen() {
 	//Event polling
 	try {
+		this->mouseOn = false;
 		sf::Event event;
+
 		while (this->window_sfml->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				this->window_sfml->close();
 			}
 			this->window_tgui->handleEvent(event);
 			if (event.type == sf::Event::MouseButtonPressed) {
+				this->mouseOn = true;
 				if (event.mouseButton.button == sf::Mouse::Left && TGUIEventHandler::events.size() == 0) {
 					HandleSFMLEvents();
 				}
 			}
-			if (TGUIEventHandler::events.size() > 0)
-				this->HandleTGUIEvents();
-			if (this->client->events.size() > 0)
-				this->HandleClientEvents();
 		}
+		if (TGUIEventHandler::events.size() > 0)
+			this->HandleTGUIEvents();
+		if (this->client->events.size() > 0)
+			this->HandleClientEvents();
 		//Graphical drawing
 		this->window_sfml->clear();
 		this->DrawSFML();

@@ -48,4 +48,5 @@ private:
 	tgui::Gui *window_tgui;
 	UserAccount user;
 	Client *client;
+	bool mouseOn = false;
 };

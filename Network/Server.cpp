@@ -143,15 +143,17 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to fold!" << std::endl;
 		PerformFold(&this->connectedClients.at(sourceIndex).player);
 		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + " has folded!");
+		PacketHandler summationPacket(PacketType::MOVE_FOLD, std::to_string(this->connectedClients.at(sourceIndex).player.user.UID));
 		SendToAll(packetToSend, connectedClients.at(sourceIndex));//Let everyone know a player has folded
+		SendToAll(summationPacket);
 		if (NextTurn()) {
 			std::cout << "Waiting for next turn..." << std::endl;
 		}
 		else {
 			std::cout << "The round is now over." << std::endl;
 			currentTurnIndex++;
-			std::cout << "The winner is " << playingGame.at(currentTurnIndex).player.user.username.toAnsiString() << std::endl;
-			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex).player.user.username.toAnsiString());
+			std::cout << "The winner is " << playingGame.at(currentTurnIndex-1).player.user.username.toAnsiString() << std::endl;
+			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex-1).player.user.username.toAnsiString());
 			SendToAll(winnerPacket);
 		}
 	}

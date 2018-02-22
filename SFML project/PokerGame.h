@@ -11,6 +11,8 @@ namespace GameMenus {
 	*/
 	MenuStructure pokerGame;
 	tgui::EditBox::Ptr chatMessageBox = theme->load("EditBox");
+	int sliderWheelVal = 100;
+	tgui::Slider::Ptr pointSlider = theme->load("Slider");
 	std::string GetCardTexture(Card card, bool small=true) {//Returns the file destination for the cards
 		std::string initialDir;
 		if (small)
@@ -52,6 +54,7 @@ namespace GameMenus {
 		//Cards directory resources\poker_cards_chips_2d\PNGs\cards\Set_B\small
 		pokerGame.drawings_sfml.clear();
 		pokerGame.drawings_tgui.clear();
+		boundaries->clear();
 
 		sf::Font *pokerFont = new sf::Font();
 		if (!pokerFont->loadFromFile("resources/Electrolize-Regular.ttf")) {
@@ -173,7 +176,6 @@ namespace GameMenus {
 		callButtonText->setFont(*pokerFont);
 		raiseButtonText->setFont(*pokerFont);
 
-		tgui::Slider::Ptr pointSlider = theme->load("Slider");
 		sf::Text *sliderText = new sf::Text();
 		sf::FloatRect *sliderContainer = new sf::FloatRect();
 		if (userTurn) {
@@ -188,6 +190,11 @@ namespace GameMenus {
 			pointSlider->setMaximum(1000);
 			pointSlider->setSize((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width) - foldButton->getGlobalBounds().left, foldButton->getLocalBounds().height*0.25);
 			pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
+			pointSlider->setValue(sliderWheelVal);
+			pointSlider->connect("ValueChanged", [&](int slideVal) {
+				//If the mouse button is not being pressed down.
+				sliderWheelVal = slideVal;
+			},std::bind(&tgui::Slider::getValue,pointSlider));
 
 			sliderText->setFont(*pokerFont);
 			sliderText->setCharacterSize(0.000017*screenWidth*screenHeight);
@@ -232,6 +239,21 @@ namespace GameMenus {
 					playerItems.push_back(playerText);
 					playerItems.push_back(profilePicture);
 					playerItems.push_back(scoreText);
+
+					if (!players.at(c)->playing) {
+						sf::RectangleShape *foldRectangle = new sf::RectangleShape();
+						sf::Text *bustText = new sf::Text();
+						bustText->setFont(*pokerFont);
+						foldRectangle->setSize(sf::Vector2f(playerText->getLocalBounds().width, playerText->getLocalBounds().height*1.1));
+						foldRectangle->setPosition(playerText->getGlobalBounds().left + playerText->getLocalBounds().width / 2 - foldRectangle->getLocalBounds().width / 2, profilePicture->getGlobalBounds().top + profilePicture->getLocalBounds().height / 2 - foldRectangle->getLocalBounds().height / 2);
+						foldRectangle->setFillColor(sf::Color::White);
+						foldRectangle->setOutlineColor(sf::Color::Black);
+						foldRectangle->setOutlineThickness(2);
+						bustText->setFillColor(sf::Color::Red);
+						bustText->setCharacterSize(1.5*0.000017*screenWidth*screenHeight);
+						bustText->setString("FOLDED");
+						bustText->setPosition(foldRectangle->getGlobalBounds().left + foldRectangle->getLocalBounds().width / 2 - bustText->getLocalBounds().width / 2, foldRectangle->getGlobalBounds().top + foldRectangle->getLocalBounds().height / 2 - bustText->getLocalBounds().height / 2);
+					}
 				}
 				else {
 					sf::Text *playerText = new sf::Text();
