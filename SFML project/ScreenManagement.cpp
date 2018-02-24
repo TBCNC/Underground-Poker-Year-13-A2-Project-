@@ -84,6 +84,8 @@ void ScreenManagement::HandleTGUIEvents()
 					if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
 						UserAccount accountToAdd(TGUIEventHandler::events.at(c)->arguments.at(0));
 						this->user = accountToAdd;
+						Client *ourClient = new Client(this->user.UID);
+						this->client = ourClient;
 						MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 						AddMenu(msgBox);
 					}
@@ -190,12 +192,28 @@ void ScreenManagement::HandleTGUIEvents()
 				auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(serverList);
 				this->currentMenu = MenuTypes::SERVER_LIST;
+				break;
 			}
 			case TGUIEvents::CHANGE_TO_SERVER_SETUP: {
 				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 				auto serverSetup = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(serverSetup);
 				this->currentMenu = MenuTypes::SERVER_SETUP;
+				break;
+			}
+			case TGUIEvents::CHANGE_TO_PLAY_MENU: {
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				auto playMenu = GameMenus::PlayMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(playMenu);
+				this->currentMenu = MenuTypes::PLAY_CHOICE;
+				break;
+			}
+			case TGUIEvents::CHANGE_TO_MAIN_MENU: {
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				auto playMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y,this->user);
+				AddMenu(playMenu);
+				this->currentMenu = MenuTypes::MAIN_MENU;
+				break;
 			}
 			case TGUIEvents::SLIDER_CHANGED: {
 				break;

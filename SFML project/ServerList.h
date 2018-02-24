@@ -35,7 +35,19 @@ namespace GameMenus {
 		connect_button->setSize(serverBoxRectangle->getLocalBounds().width*0.1, serverBoxRectangle->getLocalBounds().height*0.05);
 		connect_button->setPosition(serverListBox->getPosition().x + serverListBox->getSize().x - connect_button->getSize().x,serverListBox->getPosition().y+serverListBox->getSize().y+serverBoxRectangle->getLocalBounds().height*0.025);
 		connect_button->setText("Connect");
-
+		
+		tgui::Button::Ptr back_button = theme->load("Button");
+		back_button->setFont(*pokerFont);
+		back_button->setSize(serverBoxRectangle->getLocalBounds().width*0.1, serverBoxRectangle->getLocalBounds().height*0.05);
+		back_button->setPosition(serverListBox->getPosition().x, connect_button->getPosition().y);
+		back_button->setText("Back");
+		back_button->connect("pressed",[&]() {
+			TGUIEvent *event = new TGUIEvent;
+			event->menu = serverList;
+			event->eventType = TGUIEvents::CHANGE_TO_PLAY_MENU;
+			TGUIEventHandler::events.push_back(event);
+		});
+		
 		//The value is going to be the name of the server while the ID is going to be the server ID.
 		//serverListBox->addItem("Test test this is server");
 		UserServers servers;
@@ -54,6 +66,7 @@ namespace GameMenus {
 		serverList.drawings_sfml.push_back(serverHeading);
 		serverList.drawings_tgui.push_back(serverListBox);
 		serverList.drawings_tgui.push_back(connect_button);
+		serverList.drawings_tgui.push_back(back_button);
 		return serverList;
 	}
 }

@@ -22,8 +22,8 @@ namespace GameMenus {
 		sf::RectangleShape *setupBox = new sf::RectangleShape();
 		setupBox->setSize(sf::Vector2f(gameWidth*0.9, gameWidth*0.5));
 		setupBox->setFillColor(sf::Color(103, 103, 103, 255 * 0.6));
-		setupBox->setPosition(gameWidth / 2 - setupBox->getLocalBounds().width / 2, gameHeight / 2 - setupBox->getLocalBounds().height/2);
-		
+		setupBox->setPosition(gameWidth / 2 - setupBox->getLocalBounds().width / 2, gameHeight / 2 - setupBox->getLocalBounds().height / 2);
+
 		sf::Text *headingText = new sf::Text();
 		headingText->setFont(*pokerFont);
 		headingText->setCharacterSize(2.5*0.000017*gameWidth*gameHeight);
@@ -33,12 +33,12 @@ namespace GameMenus {
 			, setupBox->getGlobalBounds().top + setupBox->getLocalBounds().height*0.05);
 
 		server_name->setFont(*pokerFont);
-		server_name->setPosition(setupBox->getGlobalBounds().left+setupBox->getLocalBounds().width*0.05, headingText->getLocalBounds().top + headingText->getLocalBounds().height + setupBox->getLocalBounds().height*0.2);
+		server_name->setPosition(setupBox->getGlobalBounds().left + setupBox->getLocalBounds().width*0.05, headingText->getLocalBounds().top + headingText->getLocalBounds().height + setupBox->getLocalBounds().height*0.2);
 		server_name->setSize(setupBox->getLocalBounds().width*0.9, setupBox->getLocalBounds().height*0.1);
 		server_name->setDefaultText("Server title");
-		
+
 		server_password->setFont(*pokerFont);
-		server_password->setPosition(server_name->getPosition().x, server_name->getPosition().y+server_name->getSize().y+setupBox->getLocalBounds().height*0.1);
+		server_password->setPosition(server_name->getPosition().x, server_name->getPosition().y + server_name->getSize().y + setupBox->getLocalBounds().height*0.1);
 		server_password->setSize(setupBox->getLocalBounds().width*0.9, setupBox->getLocalBounds().height*0.1);
 		server_password->setDefaultText("Password (leave blank if none)");
 		server_password->setPasswordCharacter('*');
@@ -62,7 +62,19 @@ namespace GameMenus {
 		server_create_button->connect("pressed", [&]() {
 			TGUIEvent *event = new TGUIEvent;
 			event->eventType = TGUIEvents::CREATE_SERVER;
-			event->arguments = {server_name->getText(),server_password->getText(),server_port->getText()};
+			event->arguments = { server_name->getText(),server_password->getText(),server_port->getText() };
+			event->menu = serverMenu;
+			TGUIEventHandler::events.push_back(event);
+		});
+
+		tgui::Button::Ptr back_button = theme->load("Button");
+		back_button->setFont(*pokerFont);
+		back_button->setSize(setupBox->getLocalBounds().width*0.1, setupBox->getLocalBounds().height*0.05);
+		back_button->setText("<-");
+		back_button->setPosition(setupBox->getGlobalBounds().left + setupBox->getLocalBounds().width*0.05, setupBox->getGlobalBounds().top + setupBox->getLocalBounds().height*0.05);
+		back_button->connect("pressed", [&]() {
+			TGUIEvent *event = new TGUIEvent;
+			event->eventType = TGUIEvents::CHANGE_TO_PLAY_MENU;
 			event->menu = serverMenu;
 			TGUIEventHandler::events.push_back(event);
 		});
@@ -74,6 +86,7 @@ namespace GameMenus {
 		serverMenu.drawings_tgui.push_back(server_port);
 		serverMenu.drawings_sfml.push_back(server_port_notice);
 		serverMenu.drawings_tgui.push_back(server_create_button);
+		serverMenu.drawings_tgui.push_back(back_button);
 		return serverMenu;
 	}
 }
