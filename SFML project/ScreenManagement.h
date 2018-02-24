@@ -3,6 +3,7 @@
 #include "TGUIEventHandler.h"
 #include "../Network/Client.h"
 #include "../Network/PacketType.h"
+#include "../Network/Server.h"
 #include "../Network/UserAccount.h"
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
@@ -48,5 +49,6 @@ private:
 	tgui::Gui *window_tgui;
 	UserAccount user;
 	Client *client;
+	
 	bool mouseOn = false;
 };

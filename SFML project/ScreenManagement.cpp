@@ -13,24 +13,10 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 	this->window_tgui = window_tgui;
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
-	//auto loginMenu = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-	//this->menus.push_back(loginMenu);
-	
-	int uid;
-	std::cout << "Enter UID:";
-	std::cin >> uid;
-	Client *client = new Client(uid);
+	auto serverOptions = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	this->menus.push_back(serverOptions);
+	Client *client = new Client();
 	this->client = client;
-	std::thread clientThread(&Client::ConnectToServer,this->client,"192.168.0.15",666);
-	clientThread.detach();
-	
-	/*UserAccount *userAccount1 = new UserAccount(1, true);
-	UserAccount *userAccount2 = new UserAccount(2, true);
-	UserAccount *userAccount3 = new UserAccount(3, true);*/
-
-	auto poker = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries);
-	this->menus.push_back(poker);
-	this->currentMenu = MenuTypes::POKER_GAME;
 }
 ScreenManagement::~ScreenManagement()
 {
@@ -100,6 +86,9 @@ void ScreenManagement::HandleTGUIEvents()
 				this->client->SendPacketToServer(PacketType::CHAT_MESSAGE, chatMsg);
 				break;
 			}
+			case TGUIEvents::CREATE_SERVER:
+				std::string serverName = TGUIEventHandler::events.at(c)->arguments.at(0);
+				break;
 			case TGUIEvents::SLIDER_CHANGED: {
 				break;
 			}

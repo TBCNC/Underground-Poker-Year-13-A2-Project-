@@ -8,6 +8,7 @@ enum TGUIEvents : int{
 	LOG_IN=4,
 	SEND_CHAT_MESSAGE=5,
 	SLIDER_CHANGED=6,
+	CREATE_SERVER=7,
 };
 struct TGUIEvent
 {

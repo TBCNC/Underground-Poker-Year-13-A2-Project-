@@ -1,5 +1,9 @@
 #include "Server.h"
 
+Server::Server()
+{
+}
+
 Server::Server(std::string name, int portNum, bool competitive, std::string password){
 	this->name = name;
 	this->port = portNum;

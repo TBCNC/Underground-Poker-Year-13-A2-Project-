@@ -29,6 +29,7 @@ struct Connection {
 };
 class Server {
 public:
+	Server();
 	Server(std::string name, int portNum, bool competitive=false, std::string password="");
 	~Server();
 	void Start();
