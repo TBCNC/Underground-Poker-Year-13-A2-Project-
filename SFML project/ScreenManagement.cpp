@@ -7,6 +7,7 @@
 #include "ServerList.h"
 #include "PokerGame.h"
 #include "ServerSetup.h"
+#include "PlayMenu.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->client = client;
@@ -184,6 +185,18 @@ void ScreenManagement::HandleTGUIEvents()
 				}
 				break;
 			}
+			case TGUIEvents::CHANGE_TO_SERVER_LIST: {
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(serverList);
+				this->currentMenu = MenuTypes::SERVER_LIST;
+			}
+			case TGUIEvents::CHANGE_TO_SERVER_SETUP: {
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				auto serverSetup = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(serverSetup);
+				this->currentMenu = MenuTypes::SERVER_SETUP;
+			}
 			case TGUIEvents::SLIDER_CHANGED: {
 				break;
 			}
@@ -304,10 +317,11 @@ void ScreenManagement::HandleSFMLEvents() {
 		auto boxes = GameMenus::MainMenu_GetBoxes(window_sfml->getSize().x, window_sfml->getSize().y);
 		if (boxes.at(0).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Play button pressed
 			std::cout << "User wants to play!" << std::endl;
-			auto serverList = GameMenus::ServerList(window_sfml->getSize().x, window_sfml->getSize().y);
+			//auto serverList = GameMenus::ServerList(window_sfml->getSize().x, window_sfml->getSize().y);
+			auto playMenu = GameMenus::PlayMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 			RemoveMenu(this->menus.at(1));
-			AddMenu(serverList);
-			currentMenu = MenuTypes::SERVER_LIST;
+			AddMenu(playMenu);
+			currentMenu = MenuTypes::PLAY_CHOICE;
 		}
 		else if (boxes.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {//Options button pressed
 			std::cout << "User wants to access options" << std::endl;

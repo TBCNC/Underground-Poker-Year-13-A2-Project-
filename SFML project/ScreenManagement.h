@@ -23,6 +23,7 @@ enum MenuTypes:int{
 	POKER_GAME=4,
 	SERVER_SETUP=5,
 	CREATE_ACCOUNT_MENU=6,
+	PLAY_CHOICE=7,
 };
 class ScreenManagement : TGUIEventHandler{
 public:
