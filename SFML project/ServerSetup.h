@@ -2,14 +2,15 @@
 #include "MenuStructure.h"
 #include "TGUIEvents.h"
 #include "TGUIEventHandler.h"
+#include <TGUI/TGUI.hpp>
 #pragma once
 
 namespace GameMenus {
 	MenuStructure serverMenu;
-
 	tgui::EditBox::Ptr server_name = theme->load("EditBox");
 	tgui::EditBox::Ptr server_password = theme->load("EditBox");
 	tgui::EditBox::Ptr server_port = theme->load("EditBox");
+
 	MenuStructure ServerSetup(int gameWidth, int gameHeight) {
 		serverMenu.drawings_sfml.clear();
 		serverMenu.drawings_tgui.clear();

@@ -11,7 +11,7 @@ class UserAccount
 public:
 	UserAccount();
 	UserAccount(int UID, bool retrieveInfo=false);
-	UserAccount(sf::String username);
+	UserAccount(sf::String username, bool retrieveInfo=true);
 	bool Login(sf::String password);
 	bool UserExist();
 	sf::String username;

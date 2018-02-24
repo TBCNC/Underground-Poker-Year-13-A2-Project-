@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Background.h" />
+    <ClInclude Include="CreateAccountMenu.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Login.h" />
     <ClInclude Include="LoginMenu.h" />

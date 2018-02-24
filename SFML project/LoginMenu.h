@@ -67,12 +67,25 @@ namespace GameMenus {
 			TGUIEventHandler::events.push_back(eventResult);
 		});
 
+		tgui::Button::Ptr createAccount_button = theme->load("Button");
+		createAccount_button->setPosition(password_box->getPosition().x, loginrectangle->getGlobalBounds().top + (loginrectangle->getLocalBounds().height*0.8));
+		createAccount_button->setSize(loginrectangle->getLocalBounds().width*0.15, loginrectangle->getLocalBounds().height*0.15);
+		createAccount_button->setText("Register");
+		createAccount_button->setFont(*pokerFont);
+		createAccount_button->connect("pressed", [&]() {
+			TGUIEvent *eventResult = new TGUIEvent;
+			eventResult->eventType = TGUIEvents::CHANGE_TO_CREATE_MENU;
+			eventResult->menu = menu;
+			TGUIEventHandler::events.push_back(eventResult);
+		});
+
 		menu.drawings_sfml.push_back(loginrectangle);
 		menu.drawings_sfml.push_back(title);
 		menu.drawings_sfml.push_back(form_title);
 		menu.drawings_tgui.push_back(login_box);
 		menu.drawings_tgui.push_back(password_box);
 		menu.drawings_tgui.push_back(login_button);
+		menu.drawings_tgui.push_back(createAccount_button);
 		return menu;
 	}
 };

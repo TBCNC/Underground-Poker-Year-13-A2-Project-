@@ -10,9 +10,10 @@ UserAccount::UserAccount(int UID, bool retrieveInfo) {
 		RetrieveInformation();
 	this->profilePicture = "resources/profilePic.png";
 }
-UserAccount::UserAccount(sf::String username) {
+UserAccount::UserAccount(sf::String username, bool retrieveInfo) {
 	this->username = username;
-	RetrieveInformation();
+	if(retrieveInfo)
+		RetrieveInformation();
 }
 bool UserAccount::Login(sf::String password)
 {

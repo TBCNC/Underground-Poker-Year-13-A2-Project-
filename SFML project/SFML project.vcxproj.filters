@@ -89,5 +89,8 @@
     <ClInclude Include="ServerSetup.h">
       <Filter>Header Files\Graphics\Menus</Filter>
     </ClInclude>
+    <ClInclude Include="CreateAccountMenu.h">
+      <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

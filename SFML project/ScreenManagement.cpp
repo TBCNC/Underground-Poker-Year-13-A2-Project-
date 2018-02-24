@@ -1,4 +1,5 @@
 #include "ScreenManagement.h"
+#include "CreateAccountMenu.h"
 #include "MessageBox.h"
 #include "LoginMenu.h"
 #include "MainMenu.h"
@@ -13,8 +14,8 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 	this->window_tgui = window_tgui;
 	auto background = GameMenus::BackgroundImage(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(background);
-	auto serverOptions = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
-	this->menus.push_back(serverOptions);
+	auto accountOptions = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+	this->menus.push_back(accountOptions);
 	Client *client = new Client(1);//Using UID 1 as a test, in future it will be the user account's UID.
 	this->client = client;
 }
@@ -49,6 +50,16 @@ void ScreenManagement::HandleTGUIEvents()
 				AddMenu(serverCreationMenu);
 				currentMenu = MenuTypes::SERVER_SETUP;
 			}
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Please fill in all fields!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "Please make your password longer!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "This user already exists!") {
+				MenuStructure mainMenu = GameMenus::CreateAccountMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(mainMenu);
+				currentMenu = MenuTypes::CREATE_ACCOUNT_MENU;
+			}
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Account created! You can now log in!") {
+				MenuStructure logIn = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(logIn);
+				currentMenu = MenuTypes::LOG_IN_MENU;
+			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_YES:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
@@ -67,7 +78,7 @@ void ScreenManagement::HandleTGUIEvents()
 		case TGUIEvents::LOG_IN:{
 				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 				//std::cout << TGUIEventHandler::events.at(c)->arguments.at(0) << std::endl;
-				UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0));
+				UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0),false);
 				if (login_account.UserExist()) {
 					if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
 						this->user = login_account;
@@ -91,9 +102,57 @@ void ScreenManagement::HandleTGUIEvents()
 				this->client->SendPacketToServer(PacketType::CHAT_MESSAGE, chatMsg);
 				break;
 			}
+			case TGUIEvents::CREATE_ACCOUNT: {
+				std::string username = TGUIEventHandler::events.at(c)->arguments.at(0);
+				std::string password = TGUIEventHandler::events.at(c)->arguments.at(1);
+				std::string email = (TGUIEventHandler::events.at(c)->arguments.at(2));
+				UserAccount user(username, false);
+				if (username == "" || password == "" || email == "") {
+					//User not entered all details
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgbox = GameMenus::MessageBox("Please fill in all fields!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgbox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+					break;
+				}
+				else if (strlen(password.c_str()) < 6) {
+					//password not secure enough
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgbox = GameMenus::MessageBox("Please make your password longer!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgbox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+					break;
+				}
+				else {
+					//All good to go
+					UserAccount newAccount(username, false);
+					if (newAccount.CreateAccount(password,email)) {
+						RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+						auto msgbox = GameMenus::MessageBox("Account created! You can now log in!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+						AddMenu(msgbox);
+						this->currentMenu = MenuTypes::MESSAGE_BOX;
+						break;
+					}
+					else {
+						RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+						auto msgbox = GameMenus::MessageBox("This user already exists!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+						AddMenu(msgbox);
+						this->currentMenu = MenuTypes::MESSAGE_BOX;
+						break;
+					}
+				}
+				break;
+			}
+			case TGUIEvents::CHANGE_TO_CREATE_MENU: {
+				RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+				auto accountCreationMenu = GameMenus::CreateAccountMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(accountCreationMenu);
+				this->currentMenu = MenuTypes::CREATE_ACCOUNT_MENU;
+				break;
+			}
 			case TGUIEvents::CREATE_SERVER: {
 				std::string serverName = TGUIEventHandler::events.at(c)->arguments.at(0);
-				std::string serverPasswowrd = PasswordHash::GeneratePassword(TGUIEventHandler::events.at(c)->arguments.at(1));
+				std::string serverPasswowrd = TGUIEventHandler::events.at(c)->arguments.at(1);
 				std::string portNum = (TGUIEventHandler::events.at(c)->arguments.at(2));
 				if (portNum.find_first_not_of("0123456789") == std::string::npos) {
 					//This is a number
@@ -281,6 +340,9 @@ void ScreenManagement::UpdateScreen() {
 	try {
 		this->mouseOn = false;
 		sf::Event event;
+		if(this->client!=nullptr)
+			if (this->client->events.size() > 0)
+				this->HandleClientEvents();
 
 		while (this->window_sfml->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
@@ -296,8 +358,6 @@ void ScreenManagement::UpdateScreen() {
 		}
 		if (TGUIEventHandler::events.size() > 0)
 			this->HandleTGUIEvents();
-		if (this->client->events.size() > 0)
-			this->HandleClientEvents();
 		//Graphical drawing
 		this->window_sfml->clear();
 		this->DrawSFML();
