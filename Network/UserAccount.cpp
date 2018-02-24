@@ -62,7 +62,23 @@ void UserAccount::RetrieveInformation()
 		else
 			this->username = db.ExecuteQuery_Select("users", { "username" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0);
 		this->ELO = stoi(db.ExecuteQuery_Select("statistics", { "ELO_RANKING" }, { "UID" }, { std::to_string(this->UID) }).at(0).at(0));
-		std::cout << "Username is:" << this->username.toAnsiString() << std::endl;
+		Statistics allStats;
+		auto statistics = db.ExecuteQuery_Select("statistics", { "ROUNDS_WON","ROUNDS_LOST","GAMES_WON","GAMES_LOST","COMPS_WON","COMPS_LOST"}, { "UID" }, { std::to_string(this->UID) }).at(0);
+		allStats.rounds_won = std::stoi(statistics.at(0));
+		allStats.rounds_lost = std::stoi(statistics.at(1));
+		allStats.games_won = std::stoi(statistics.at(2));
+		allStats.games_lost = std::stoi(statistics.at(3));
+		allStats.comps_won = std::stoi(statistics.at(4));
+		allStats.comps_lost = std::stoi(statistics.at(5));
+		if (allStats.games_lost == 0)
+			allStats.wintoloss_games = allStats.games_won;
+		else
+			allStats.wintoloss_games = allStats.games_won / allStats.games_lost;
+		if (allStats.comps_lost == 0)
+			allStats.wintoloss_comps = allStats.comps_won;
+		else
+			allStats.wintoloss_comps = allStats.comps_won / allStats.comps_lost;
+		this->userStats = allStats;
 	}
 }
 std::string UserAccount::GetProfilePicture() {

@@ -3,6 +3,7 @@
 #include "TGUIEventHandler.h"
 #include <SFML/System.hpp>
 #include <TGUI/TGUI.hpp>
+#include "../Network/UserAccount.h"
 #pragma once
 namespace GameMenus {
 	auto mainMenu_Theme = tgui::Theme::create("../TGUI-0.7/widgets/Black.txt");
@@ -64,7 +65,7 @@ namespace GameMenus {
 		std::vector<sf::FloatRect> rects = { rectPlay,rectOptions,rectQuit };
 		return rects;
 	}
-	MenuStructure MainMenu(int gameWidth, int gameHeight) {
+	MenuStructure MainMenu(int gameWidth, int gameHeight, UserAccount user) {
 		mainMenu.drawings_sfml.clear();
 		mainMenu.drawings_tgui.clear();
 
@@ -163,7 +164,7 @@ namespace GameMenus {
 		playerText->setFont(*pokerFont);
 		playerText->setFillColor(sf::Color::White);
 		playerText->setCharacterSize(0.000017*gameWidth*gameHeight);
-		playerText->setString("Charles [Developer]\nLevel:23\nXP:1300/4000");
+		playerText->setString(user.username + "\nELO Rank:" + std::to_string(user.ELO));
 		playerText->setPosition(profilePicture_graphic->getGlobalBounds().left + profilePicture_graphic->getLocalBounds().width + playerRectangle->getLocalBounds().width*0.05, profilePicture_graphic->getGlobalBounds().top+profilePicture_graphic->getLocalBounds().height*0.02);
 
 		sf::Text *statisticsText_Heading = new sf::Text();
@@ -177,7 +178,8 @@ namespace GameMenus {
 		statisticsText->setFont(*pokerFont);
 		statisticsText->setFillColor(sf::Color::White);
 		statisticsText->setCharacterSize(1*0.000017*gameWidth*gameHeight);
-		statisticsText->setString("Rounds won:247\nGames won:102\nGames lost:89\nWin-Loss ratio:1.15\nTimes knocked out:12\n\nCompetitive games won:27\nCompetitive games lost:32\nRatio:0.84375");
+		//statisticsText->setString("Rounds won:247\nGames won:102\nGames lost:89\nWin-Loss ratio:1.15\nTimes knocked out:12\n\nCompetitive games won:27\nCompetitive games lost:32\nRatio:0.84375");
+		statisticsText->setString("\nRounds won:" + std::to_string(user.userStats.rounds_won) + "\nGames won:"+std::to_string(user.userStats.games_won)+"\nGames lost:"+std::to_string(user.userStats.games_lost)+"\nWin-Loss ratio"+std::to_string(user.userStats.wintoloss_games)+"\n\nCompetitive games:"+std::to_string(user.userStats.comps_won)+"\nCompetitive games lost:"+std::to_string(user.userStats.comps_lost)+"\nWin-Loss ratio:"+std::to_string(user.userStats.wintoloss_comps));
 		statisticsText->setPosition(statisticsText_Heading->getGlobalBounds().left, statisticsText->getGlobalBounds().top + statisticsText->getLocalBounds().height + (statisticsRectangle->getLocalBounds().height*0.02));
 
 		sf::Text *announcementsText_Heading = new sf::Text();

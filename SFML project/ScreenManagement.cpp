@@ -41,7 +41,7 @@ void ScreenManagement::HandleTGUIEvents()
 				currentMenu = MenuTypes::LOG_IN_MENU;
 			}
 			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Logged in successfully!") {
-				MenuStructure mainMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				MenuStructure mainMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y,this->user);
 				AddMenu(mainMenu);
 				currentMenu = MenuTypes::MAIN_MENU;
 			}
@@ -70,7 +70,7 @@ void ScreenManagement::HandleTGUIEvents()
 		case TGUIEvents::MESSAGE_BOX_NO:
 			RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 			if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Are you sure you want to quit?") {
-				auto mainMenu = GameMenus::MainMenu(window_sfml->getSize().x, window_sfml->getSize().y);
+				auto mainMenu = GameMenus::MainMenu(window_sfml->getSize().x, window_sfml->getSize().y,this->user);
 				AddMenu(mainMenu);
 				currentMenu = MenuTypes::MAIN_MENU;
 			}
@@ -81,7 +81,8 @@ void ScreenManagement::HandleTGUIEvents()
 				UserAccount login_account(TGUIEventHandler::events.at(c)->arguments.at(0),false);
 				if (login_account.UserExist()) {
 					if (login_account.Login(TGUIEventHandler::events.at(c)->arguments.at(1))) {
-						this->user = login_account;
+						UserAccount accountToAdd(TGUIEventHandler::events.at(c)->arguments.at(0));
+						this->user = accountToAdd;
 						MenuStructure msgBox = GameMenus::MessageBox("Logged in successfully!", GameMenus::MessageType::INFORMATION, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 						AddMenu(msgBox);
 					}

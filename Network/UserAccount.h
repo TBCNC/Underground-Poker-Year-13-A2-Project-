@@ -6,6 +6,16 @@
 #include "PasswordHash.h"
 #pragma once
 
+struct Statistics {
+	int rounds_won;
+	int rounds_lost;
+	int games_won;
+	int games_lost;
+	int comps_won;
+	int comps_lost;
+	float wintoloss_games;
+	float wintoloss_comps;
+};
 class UserAccount
 {
 public:
@@ -19,6 +29,7 @@ public:
 	int ELO;
 	bool CreateAccount(sf::String password,sf::String email);
 	std::string profilePicture;//Location of profile pic texture
+	Statistics userStats;
 private:
 	sf::String GetPasswordHash();
 	std::string GetProfilePicture();
