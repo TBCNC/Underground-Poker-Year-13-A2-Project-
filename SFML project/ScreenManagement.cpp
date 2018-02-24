@@ -15,7 +15,7 @@ ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *win
 	this->menus.push_back(background);
 	auto serverOptions = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 	this->menus.push_back(serverOptions);
-	Client *client = new Client();
+	Client *client = new Client(1);//Using UID 1 as a test, in future it will be the user account's UID.
 	this->client = client;
 }
 ScreenManagement::~ScreenManagement()
@@ -43,6 +43,11 @@ void ScreenManagement::HandleTGUIEvents()
 				MenuStructure mainMenu = GameMenus::MainMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(mainMenu);
 				currentMenu = MenuTypes::MAIN_MENU;
+			}
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Please enter a valid port number!") {
+				MenuStructure serverCreationMenu = GameMenus::ServerSetup(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(serverCreationMenu);
+				currentMenu = MenuTypes::SERVER_SETUP;
 			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_YES:
@@ -86,9 +91,39 @@ void ScreenManagement::HandleTGUIEvents()
 				this->client->SendPacketToServer(PacketType::CHAT_MESSAGE, chatMsg);
 				break;
 			}
-			case TGUIEvents::CREATE_SERVER:
+			case TGUIEvents::CREATE_SERVER: {
 				std::string serverName = TGUIEventHandler::events.at(c)->arguments.at(0);
+				std::string serverPasswowrd = PasswordHash::GeneratePassword(TGUIEventHandler::events.at(c)->arguments.at(1));
+				std::string portNum = (TGUIEventHandler::events.at(c)->arguments.at(2));
+				if (portNum.find_first_not_of("0123456789") == std::string::npos) {
+					//This is a number
+					int portNum_int = std::stoi(portNum);
+					Server *server = new Server(serverName, portNum_int, false, serverPasswowrd);
+					this->server = server;
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					this->chatHistory.clear();
+					this->currentPlayers.clear();
+					this->pokerBoundaries.clear();
+					this->userCards.clear();
+					this->tableCards.clear();
+					auto pokerGame = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries);
+					AddMenu(pokerGame);
+					this->currentMenu = MenuTypes::POKER_GAME;
+					std::thread serverThread(&Server::Start,this->server);
+					std::thread clientThread(&Client::ConnectToServer,this->client,"127.0.0.1",portNum_int);
+					serverThread.detach();
+					sleep(sf::milliseconds(25));
+					clientThread.detach();
+				}
+				else {
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgbox = GameMenus::MessageBox("Please enter a valid port number!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgbox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+					break;
+				}
 				break;
+			}
 			case TGUIEvents::SLIDER_CHANGED: {
 				break;
 			}

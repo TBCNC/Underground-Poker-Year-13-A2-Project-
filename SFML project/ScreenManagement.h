@@ -3,6 +3,7 @@
 #include "TGUIEventHandler.h"
 #include "../Network/Client.h"
 #include "../Network/PacketType.h"
+#include "../Network/PasswordHash.h"
 #include "../Network/Server.h"
 #include "../Network/UserAccount.h"
 #include <SFML/Graphics.hpp>
@@ -20,6 +21,7 @@ enum MenuTypes:int{
 	MAIN_MENU=2,
 	SERVER_LIST=3,
 	POKER_GAME=4,
+	SERVER_SETUP=5,
 };
 class ScreenManagement : TGUIEventHandler{
 public:
@@ -49,6 +51,6 @@ private:
 	tgui::Gui *window_tgui;
 	UserAccount user;
 	Client *client;
-	
+	Server *server;
 	bool mouseOn = false;
 };
