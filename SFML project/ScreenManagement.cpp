@@ -445,6 +445,9 @@ void ScreenManagement::UpdateScreen() {
 			if (this->client->events.size() > 0)
 				this->HandleClientEvents();
 
+		if (TGUIEventHandler::events.size() > 0)
+			this->HandleTGUIEvents();
+
 		while (this->window_sfml->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				this->window_sfml->close();
@@ -457,8 +460,6 @@ void ScreenManagement::UpdateScreen() {
 				}
 			}
 		}
-		if (TGUIEventHandler::events.size() > 0)
-			this->HandleTGUIEvents();
 		//Graphical drawing
 		this->window_sfml->clear();
 		this->DrawSFML();
