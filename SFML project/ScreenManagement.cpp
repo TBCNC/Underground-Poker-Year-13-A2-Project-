@@ -8,6 +8,7 @@
 #include "PokerGame.h"
 #include "ServerSetup.h"
 #include "PlayMenu.h"
+#include "PasswordMenu.h"
 
 ScreenManagement::ScreenManagement(sf::RenderWindow *window_sfml, tgui::Gui *window_tgui) {
 	this->client = client;
@@ -60,6 +61,12 @@ void ScreenManagement::HandleTGUIEvents()
 				MenuStructure logIn = GameMenus::LoginScreen(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(logIn);
 				currentMenu = MenuTypes::LOG_IN_MENU;
+			}
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Please select a server!" || TGUIEventHandler::events.at(c)->arguments.at(0)== "Could not connect to server!"
+				|| TGUIEventHandler::events.at(c)->arguments.at(0)== "Wrong password!") {
+				auto serverList = GameMenus::ServerList(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+				AddMenu(serverList);
+				currentMenu = MenuTypes::SERVER_LIST;
 			}
 			break;
 		case TGUIEvents::MESSAGE_BOX_YES:
@@ -173,7 +180,8 @@ void ScreenManagement::HandleTGUIEvents()
 					AddMenu(pokerGame);
 					this->currentMenu = MenuTypes::POKER_GAME;
 					std::thread serverThread(&Server::Start,this->server);
-					std::thread clientThread(&Client::ConnectToServer,this->client,"127.0.0.1",portNum_int);
+					this->client->ConnectToServer("127.0.0.1", portNum_int);
+					std::thread clientThread(&Client::ListenForData,this->client);
 					serverThread.detach();
 					sleep(sf::milliseconds(25));
 					clientThread.detach();
@@ -182,6 +190,66 @@ void ScreenManagement::HandleTGUIEvents()
 					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 					auto msgbox = GameMenus::MessageBox("Please enter a valid port number!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 					AddMenu(msgbox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+					break;
+				}
+				break;
+			}
+			case TGUIEvents::JOIN_SERVER:
+				if (TGUIEventHandler::events.at(c)->arguments.size() != 0) {
+					std::string ip = TGUIEventHandler::events.at(c)->arguments.at(0);
+					int port = std::stoi(TGUIEventHandler::events.at(c)->arguments.at(1));
+					std::string password = TGUIEventHandler::events.at(c)->arguments.at(2);
+					if (password == "") {
+						if (this->client->ConnectToServer(ip, port)) {
+							//Load the poker table
+							RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+							auto pokerGame = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, false,&this->pokerBoundaries);
+							this->currentMenu = MenuTypes::POKER_GAME;
+							AddMenu(pokerGame);
+							std::thread clientThread(&Client::ListenForData, this->client);
+							clientThread.detach();
+						}
+						else {
+							RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+							auto msgBox = GameMenus::MessageBox("Could not connect to server!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+							AddMenu(msgBox);
+						}
+					}
+					else {
+						//Spawn password menu
+						this->latestIP = ip;
+						this->latestPort = port;
+						RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+						auto passwordField = GameMenus::PasswordBox(this->window_sfml->getSize().x, this->window_sfml->getSize().y, password);
+						AddMenu(passwordField);
+						this->currentMenu = MenuTypes::PASSWORD_MENU;
+					}
+				}
+				else {
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgBox = GameMenus::MessageBox("Please select a server!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgBox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+				}
+				break;
+			case TGUIEvents::PASSWORD_ENTERED: {
+				if (TGUIEventHandler::events.at(c)->arguments.at(0)=="1") {
+					//Join the server
+					if (this->client->ConnectToServer(this->latestIP, this->latestPort)) {
+						RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+						auto pokerGame = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, false, &this->pokerBoundaries);
+						this->currentMenu = MenuTypes::POKER_GAME;
+						AddMenu(pokerGame);
+						std::thread clientThread(&Client::ListenForData, this->client);
+						clientThread.detach();
+						break;
+					}
+				}
+				else {
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgBox = GameMenus::MessageBox("Wrong password!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgBox);
 					this->currentMenu = MenuTypes::MESSAGE_BOX;
 					break;
 				}

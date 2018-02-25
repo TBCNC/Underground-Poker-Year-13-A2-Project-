@@ -4,9 +4,12 @@
 #include "TGUIEvents.h"
 #include "TGUIEventHandler.h"
 #include "../Network/UserServers.h"
+#include <vector>
 #pragma once
 namespace GameMenus {
 	MenuStructure serverList;
+	std::vector<UserServer> allServers;
+	tgui::ListBox::Ptr serverListBox = theme->load("ListBox");
 	MenuStructure ServerList(int gameWidth, int gameHeight) {
 		serverList.drawings_sfml.clear();
 		serverList.drawings_tgui.clear();
@@ -26,7 +29,7 @@ namespace GameMenus {
 		serverHeading->setCharacterSize(48);
 		serverHeading->setPosition(serverBoxRectangle->getGlobalBounds().left + serverBoxRectangle->getLocalBounds().width*0.05, serverBoxRectangle->getGlobalBounds().top + serverBoxRectangle->getLocalBounds().height*0.05);
 
-		tgui::ListBox::Ptr serverListBox = theme->load("ListBox");
+
 		serverListBox->setPosition(serverHeading->getGlobalBounds().left, serverHeading->getGlobalBounds().top + serverHeading->getLocalBounds().height * 2);
 		serverListBox->setSize(sf::Vector2f(serverBoxRectangle->getLocalBounds().width*0.9, serverBoxRectangle->getLocalBounds().height*0.7));
 		
@@ -35,6 +38,17 @@ namespace GameMenus {
 		connect_button->setSize(serverBoxRectangle->getLocalBounds().width*0.1, serverBoxRectangle->getLocalBounds().height*0.05);
 		connect_button->setPosition(serverListBox->getPosition().x + serverListBox->getSize().x - connect_button->getSize().x,serverListBox->getPosition().y+serverListBox->getSize().y+serverBoxRectangle->getLocalBounds().height*0.025);
 		connect_button->setText("Connect");
+		connect_button->connect("pressed", [&]() {
+			TGUIEvent *newEvent = new TGUIEvent;
+			newEvent->eventType = TGUIEvents::JOIN_SERVER;
+			newEvent->menu = serverList;
+			int serverIndex = serverListBox->getSelectedItemIndex();
+			if (serverIndex != -1) {
+				UserServer serverToJoin = allServers.at(serverIndex);
+				newEvent->arguments = { serverToJoin.ip,std::to_string(serverToJoin.port),serverToJoin.password };
+			}
+			TGUIEventHandler::events.push_back(newEvent);
+		});
 		
 		tgui::Button::Ptr back_button = theme->load("Button");
 		back_button->setFont(*pokerFont);
@@ -50,8 +64,9 @@ namespace GameMenus {
 		
 		//The value is going to be the name of the server while the ID is going to be the server ID.
 		//serverListBox->addItem("Test test this is server");
+
 		UserServers servers;
-		auto allServers = servers.GetServers();
+		allServers = servers.GetServers();
 		std::string stringToAdd;
 		for (int c = 0; c < allServers.size(); c++) {
 			stringToAdd = "";

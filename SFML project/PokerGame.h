@@ -291,7 +291,7 @@ namespace GameMenus {
 		pokerGame.drawings_tgui.push_back(chatMessageBox);
 		pokerGame.drawings_tgui.push_back(sendMessageButton);
 		pokerGame.drawings_sfml.push_back(pokerTableGraphic);
-		if(cards_player.size()>0)
+		if(cards_player.size()>1)
 			pokerGame.drawings_sfml.push_back(playerCard1);
 			pokerGame.drawings_sfml.push_back(playerCard2);
 		if (userTurn) {

@@ -18,7 +18,10 @@ Server::Server(std::string name, int portNum, bool competitive, std::string pass
 		std::cout << "Server has started. Adding to database and listening for new connections." << std::endl;
 		if (!competitive) {
 			DBConnection db;
-			db.ExecuteQuery_Insert("servers", { "name","password","ip_address","port" }, { this->name,PasswordHash::GeneratePassword(this->password),sf::IpAddress::getPublicAddress().toString(),std::to_string(this->port) });
+			if(strlen(password.c_str())>0)
+				db.ExecuteQuery_Insert("servers", { "name","password","ip_address","port" }, { this->name,PasswordHash::GeneratePassword(this->password),sf::IpAddress::getPublicAddress().toString(),std::to_string(this->port) });
+			else
+				db.ExecuteQuery_Insert("servers", { "name","ip_address","port" }, { this->name,sf::IpAddress::getPublicAddress().toString(),std::to_string(this->port) });
 		}
 		serverSelector.add(this->serverSocket);
 	}

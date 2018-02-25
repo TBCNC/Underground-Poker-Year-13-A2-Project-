@@ -95,5 +95,8 @@
     <ClInclude Include="PlayMenu.h">
       <Filter>Header Files\Graphics\Menus</Filter>
     </ClInclude>
+    <ClInclude Include="PasswordMenu.h">
+      <Filter>Header Files\Graphics\Menus</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

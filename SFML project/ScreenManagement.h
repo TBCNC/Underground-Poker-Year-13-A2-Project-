@@ -24,6 +24,7 @@ enum MenuTypes:int{
 	SERVER_SETUP=5,
 	CREATE_ACCOUNT_MENU=6,
 	PLAY_CHOICE=7,
+	PASSWORD_MENU=8,
 };
 class ScreenManagement : TGUIEventHandler{
 public:
@@ -55,4 +56,7 @@ private:
 	Client *client;
 	Server *server;
 	bool mouseOn = false;
+
+	std::string latestIP = "";
+	int latestPort = 0;
 };

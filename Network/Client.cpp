@@ -12,12 +12,17 @@ Client::Client(int UID) {
 	std::cout << "Client is using UID " << UID << std::endl;
 }
 
-void Client::ConnectToServer(IpAddress address, int port) {
+bool Client::ConnectToServer(IpAddress address, int port) {//This should be a bool but we will come back to this.
 	if (this->connection.connect(address, port) == Socket::Done) {
 		this->listener.add(this->connection);//Connected to the server
 		connected = true;
 		std::cout << "Connected to server!" << std::endl;
-		ListenForData();
+		return true;
+		//ListenForData();
+	}
+	else {
+		std::cout << "Couldn't connect to server." << std::endl;
+		return false;
 	}
 }
 void Client::SendPacketToServer(PacketType type, std::string payload)

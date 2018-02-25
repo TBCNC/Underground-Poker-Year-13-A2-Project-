@@ -15,8 +15,9 @@ class Client {
 public:
 	Client();
 	Client(int UID);
-	void ConnectToServer(IpAddress address, int port);
-	void SendPacketToServer(PacketType type, std::string payload); 
+	bool ConnectToServer(IpAddress address, int port);
+	void SendPacketToServer(PacketType type, std::string payload);
+	void ListenForData();
 	Player player = Player(UserAccount(1));//Need this initializer to prevent crashing
 	std::vector<ClientEvent> events;
 	std::vector<Player> enemies;
@@ -26,7 +27,6 @@ private:
 	SocketSelector listener;
 	void AddEvent(PacketType type, std::string payload);
 	void ProcessPacket(PacketHandler packet);
-	void ListenForData();
 	bool connected=false;
 	bool firstPlayerList = true;
 };
