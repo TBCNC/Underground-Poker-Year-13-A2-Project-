@@ -27,10 +27,13 @@ namespace GameMenus {
 			break;
 		case HEARTS:
 			suitIndicator = "h";
+			break;
 		case DIAMONDS:
 			suitIndicator = "d";
+			break;
 		case SPADES:
 			suitIndicator = "s";
+			break;
 		}
 		std::string cardValue = "";
 		if (card.card_value > 10) {
@@ -50,7 +53,7 @@ namespace GameMenus {
 		else
 			return initialDir + "card_b_" + suitIndicator + cardValue + "_large.png";
 	}
-	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<Card> cards_player = {}, std::vector<Card> cards_table = {}, std::vector<float> chipsPerPlayer = {}) {
+	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<Card> cards_player = {}, std::vector<Card> cards_table = {}) {
 
 		//Cards directory resources\poker_cards_chips_2d\PNGs\cards\Set_B\small
 		pokerGame.drawings_sfml.clear();
@@ -186,7 +189,7 @@ namespace GameMenus {
 			raiseButtonText->setString("Raise");
 			raiseButtonText->setPosition((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width / 2) - raiseButtonText->getLocalBounds().width / 2, (raiseButton->getGlobalBounds().top + raiseButton->getLocalBounds().height / 2) - 3 * raiseButtonText->getLocalBounds().height / 4);
 
-			pointSlider->setMinimum(100);
+			pointSlider->setMinimum(10);
 			pointSlider->setMaximum(1000);
 			pointSlider->setSize((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width) - foldButton->getGlobalBounds().left, foldButton->getLocalBounds().height*0.25);
 			pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
@@ -285,6 +288,7 @@ namespace GameMenus {
 				}
 			}
 		}
+
 		pokerGame.drawings_sfml.push_back(chatRectangle);
 		pokerGame.drawings_tgui.push_back(chatBox);
 		pokerGame.drawings_tgui.push_back(chatMessageBox);
@@ -305,6 +309,29 @@ namespace GameMenus {
 		}
 		for (int c = 0; c < playerItems.size(); c++) {
 			pokerGame.drawings_sfml.push_back(playerItems.at(c));
+		}
+		sf::RectangleShape *lastCard = new sf::RectangleShape();
+		for (int c = 0; c < cards_table.size(); c++) {
+			if (c == 0) {
+				sf::RectangleShape *tableCard = new sf::RectangleShape();
+				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.15, pokerTableGraphic->getLocalBounds().height*0.4));
+				tableCard->setPosition(pokerTableGraphic->getGlobalBounds().left + pokerTableGraphic->getLocalBounds().width*(0.1), pokerTableGraphic->getGlobalBounds().top + pokerTableGraphic->getLocalBounds().height*0.3);
+				sf::Texture *cardTexture = new sf::Texture();
+				cardTexture->loadFromFile(GetCardTexture(cards_table.at(c)));
+				tableCard->setTexture(cardTexture);
+				pokerGame.drawings_sfml.push_back(tableCard);
+				lastCard = tableCard;
+			}
+			else {
+				sf::RectangleShape *tableCard = new sf::RectangleShape();
+				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.15, pokerTableGraphic->getLocalBounds().height*0.4));
+				tableCard->setPosition(lastCard->getGlobalBounds().left+lastCard->getLocalBounds().width+pokerTableGraphic->getLocalBounds().width*0.05, pokerTableGraphic->getGlobalBounds().top + pokerTableGraphic->getLocalBounds().height*0.3);
+				sf::Texture *cardTexture = new sf::Texture();
+				cardTexture->loadFromFile(GetCardTexture(cards_table.at(c)));
+				tableCard->setTexture(cardTexture);
+				pokerGame.drawings_sfml.push_back(tableCard);
+				lastCard = tableCard;
+			}
 		}
 		return pokerGame;
 	}
