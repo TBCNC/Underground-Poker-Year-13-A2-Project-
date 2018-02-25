@@ -429,6 +429,8 @@ void ScreenManagement::HandleSFMLEvents() {
 			}
 			else if (this->pokerBoundaries.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
 				std::cout << "User wants to call!" << std::endl;
+				this->usersTurn = false;
+				this->client->SendPacketToServer(PacketType::MOVE_CALL, std::to_string(GameMenus::pointSlider->getValue()));
 			}
 			else if (this->pokerBoundaries.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
 				std::cout << "User wants to raise!" << std::endl;

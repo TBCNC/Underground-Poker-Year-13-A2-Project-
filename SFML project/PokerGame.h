@@ -13,6 +13,7 @@ namespace GameMenus {
 	tgui::EditBox::Ptr chatMessageBox = theme->load("EditBox");
 	int sliderWheelVal = 100;
 	tgui::Slider::Ptr pointSlider = theme->load("Slider");
+	sf::Text *sliderText = new sf::Text();
 	std::string GetCardTexture(Card card, bool small=true) {//Returns the file destination for the cards
 		std::string initialDir;
 		if (small)
@@ -176,7 +177,6 @@ namespace GameMenus {
 		callButtonText->setFont(*pokerFont);
 		raiseButtonText->setFont(*pokerFont);
 
-		sf::Text *sliderText = new sf::Text();
 		sf::FloatRect *sliderContainer = new sf::FloatRect();
 		if (userTurn) {
 			foldButtonText->setString("Fold");
@@ -192,8 +192,7 @@ namespace GameMenus {
 			pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
 			pointSlider->setValue(sliderWheelVal);
 			pointSlider->connect("ValueChanged", [&](int slideVal) {
-				//If the mouse button is not being pressed down.
-				sliderWheelVal = slideVal;
+				sliderText->setString(std::to_string(slideVal));
 			},std::bind(&tgui::Slider::getValue,pointSlider));
 
 			sliderText->setFont(*pokerFont);
