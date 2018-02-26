@@ -90,4 +90,9 @@ void Client::ProcessPacket(PacketHandler packet) {
 		std::cout << "A player has folded." << std::endl;
 		AddEvent(packet.type, packet.payload);
 	}
+	else if (type == MOVE_CALL) {
+		std::cout << "A player has called." << std::endl;
+		std::cout << "Call payload:" << packet.payload << std::endl;
+		AddEvent(packet.type, packet.payload);
+	}
 }

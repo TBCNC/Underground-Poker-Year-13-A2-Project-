@@ -167,6 +167,8 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 	else if (type == PacketType::MOVE_CALL) {
 		std::cout << this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() << " wants to call!" << std::endl;
 		PerformCall(&this->connectedClients.at(sourceIndex).player,stoi(packet.payload));
+		PacketHandler callPacket(PacketType::MOVE_CALL, std::to_string(this->connectedClients.at(sourceIndex).player.user.UID) + "," +packet.payload);
+		SendToAll(callPacket);
 		PacketHandler packetToSend(PacketType::SERVER_MESSAGE, this->connectedClients.at(sourceIndex).player.user.username.toAnsiString() + " has called (" + packet.payload + " points)!");
 		SendToAll(packetToSend, this->connectedClients.at(sourceIndex));
 		if (NextTurn()) {
@@ -175,7 +177,7 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 		else {
 			std::cout << "The round is now over." << std::endl;
 			std::cout << "The winner is " << this->winner.player.user.username.toAnsiString() << std::endl;
-			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex).player.user.username.toAnsiString());
+			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex - 1).player.user.username.toAnsiString());
 			SendToAll(winnerPacket);
 		}
 	}

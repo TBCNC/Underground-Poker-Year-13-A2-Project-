@@ -59,4 +59,5 @@ private:
 
 	std::string latestIP = "";
 	int latestPort = 0;
+	int totalJackpot = 0;
 };

@@ -368,7 +368,29 @@ void ScreenManagement::HandleClientEvents() {//Handling what is received
 				}
 			}
 			RemoveMenu(this->menus.at(1));
-			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards);
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards,this->totalJackpot);
+			AddMenu(newMenu);
+			break;
+		}
+		case MOVE_CALL: {
+			std::cout << "A player has called." << std::endl;
+			std::stringstream stream(this->client->events.at(c).payload);
+			std::string item;
+			std::vector<std::string> data;
+			while (getline(stream, item, ',')) {
+				data.push_back(item);
+			}
+			int uid = std::stoi(data.at(0));
+			int points = std::stoi(data.at(1));
+			for (int i = 0; i < this->currentPlayers.size();i++) {
+				if (this->currentPlayers.at(i)->user.UID == uid) {
+					this->currentPlayers.at(i)->points -= points;
+					this->totalJackpot += points;
+					break;
+				}
+			}
+			RemoveMenu(this->menus.at(1));
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards, this->tableCards,this->totalJackpot);
 			AddMenu(newMenu);
 			break;
 		}
@@ -391,7 +413,7 @@ void ScreenManagement::HandleClientEvents() {//Handling what is received
 				this->tableCards.push_back(newCard);
 			}
 			RemoveMenu(this->menus.at(1));
-			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards);
+			auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards,this->totalJackpot);
 			AddMenu(newMenu);
 			break;
 		}
@@ -450,7 +472,7 @@ void ScreenManagement::HandleSFMLEvents() {
 				this->usersTurn = false;
 				this->client->SendPacketToServer(PacketType::MOVE_FOLD, "");
 				RemoveMenu(this->menus.at(1));
-				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards);
+				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards,this->totalJackpot);
 				AddMenu(newMenu);
 			}
 			else if (this->pokerBoundaries.at(1).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
@@ -458,7 +480,7 @@ void ScreenManagement::HandleSFMLEvents() {
 				this->usersTurn = false;
 				this->client->SendPacketToServer(PacketType::MOVE_CALL, std::to_string(GameMenus::pointSlider->getValue()));
 				RemoveMenu(this->menus.at(1));
-				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards);
+				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards,this->totalJackpot);
 				AddMenu(newMenu);
 			}
 			else if (this->pokerBoundaries.at(2).contains(static_cast<sf::Vector2f>(sf::Mouse::getPosition(*window_sfml)))) {
@@ -466,7 +488,7 @@ void ScreenManagement::HandleSFMLEvents() {
 				this->usersTurn = false;
 				this->client->SendPacketToServer(PacketType::MOVE_RAISE, std::to_string(GameMenus::pointSlider->getValue()));
 				RemoveMenu(this->menus.at(1));
-				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards);
+				auto newMenu = GameMenus::PokerGame(this->window_sfml->getSize().x, this->window_sfml->getSize().y, this->usersTurn, &this->pokerBoundaries, this->chatHistory, this->currentPlayers, this->userCards,this->tableCards,this->totalJackpot);
 				AddMenu(newMenu);
 			}
 		}

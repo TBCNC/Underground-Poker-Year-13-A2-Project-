@@ -11,7 +11,6 @@ namespace GameMenus {
 	*/
 	MenuStructure pokerGame;
 	tgui::EditBox::Ptr chatMessageBox = theme->load("EditBox");
-	int sliderWheelVal = 100;
 	tgui::Slider::Ptr pointSlider = theme->load("Slider");
 	sf::Text *sliderText = new sf::Text();
 	std::string GetCardTexture(Card card, bool small=true) {//Returns the file destination for the cards
@@ -53,7 +52,7 @@ namespace GameMenus {
 		else
 			return initialDir + "card_b_" + suitIndicator + cardValue + "_large.png";
 	}
-	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<Card> cards_player = {}, std::vector<Card> cards_table = {}) {
+	MenuStructure PokerGame(int screenWidth, int screenHeight, bool userTurn, std::vector<sf::FloatRect> *boundaries, std::vector<std::string> chatBoxText = {}, std::vector<Player*> players = {}, std::vector<Card> cards_player = {}, std::vector<Card> cards_table = {}, int jackpot=0) {
 
 		//Cards directory resources\poker_cards_chips_2d\PNGs\cards\Set_B\small
 		pokerGame.drawings_sfml.clear();
@@ -193,7 +192,7 @@ namespace GameMenus {
 			pointSlider->setMaximum(1000);
 			pointSlider->setSize((raiseButton->getGlobalBounds().left + raiseButton->getLocalBounds().width) - foldButton->getGlobalBounds().left, foldButton->getLocalBounds().height*0.25);
 			pointSlider->setPosition(foldButton->getGlobalBounds().left, chatBox->getPosition().y + chatBox->getSize().y*0.85);
-			pointSlider->setValue(sliderWheelVal);
+			pointSlider->setValue(pointSlider->getMinimum());
 			pointSlider->connect("ValueChanged", [&](int slideVal) {
 				sliderText->setString(std::to_string(slideVal));
 			},std::bind(&tgui::Slider::getValue,pointSlider));
@@ -288,6 +287,11 @@ namespace GameMenus {
 				}
 			}
 		}
+		sf::Text *jackPotTotal = new sf::Text();
+		jackPotTotal->setFont(*pokerFont);
+		jackPotTotal->setString("Jackpot:" + std::to_string(jackpot));
+		jackPotTotal->setPosition(screenWidth / 2 - jackPotTotal->getLocalBounds().width / 2, screenHeight*0.05);
+		jackPotTotal->setFillColor(sf::Color::Black);
 
 		pokerGame.drawings_sfml.push_back(chatRectangle);
 		pokerGame.drawings_tgui.push_back(chatBox);
@@ -314,8 +318,8 @@ namespace GameMenus {
 		for (int c = 0; c < cards_table.size(); c++) {
 			if (c == 0) {
 				sf::RectangleShape *tableCard = new sf::RectangleShape();
-				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.15, pokerTableGraphic->getLocalBounds().height*0.4));
-				tableCard->setPosition(pokerTableGraphic->getGlobalBounds().left + pokerTableGraphic->getLocalBounds().width*(0.1), pokerTableGraphic->getGlobalBounds().top + pokerTableGraphic->getLocalBounds().height*0.3);
+				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.1, pokerTableGraphic->getLocalBounds().height*0.4));
+				tableCard->setPosition(pokerTableGraphic->getGlobalBounds().left + pokerTableGraphic->getLocalBounds().width*(0.15), pokerTableGraphic->getGlobalBounds().top + pokerTableGraphic->getLocalBounds().height*0.3);
 				sf::Texture *cardTexture = new sf::Texture();
 				cardTexture->loadFromFile(GetCardTexture(cards_table.at(c)));
 				tableCard->setTexture(cardTexture);
@@ -324,7 +328,7 @@ namespace GameMenus {
 			}
 			else {
 				sf::RectangleShape *tableCard = new sf::RectangleShape();
-				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.15, pokerTableGraphic->getLocalBounds().height*0.4));
+				tableCard->setSize(sf::Vector2f(pokerTableGraphic->getLocalBounds().width*0.1, pokerTableGraphic->getLocalBounds().height*0.4));
 				tableCard->setPosition(lastCard->getGlobalBounds().left+lastCard->getLocalBounds().width+pokerTableGraphic->getLocalBounds().width*0.05, pokerTableGraphic->getGlobalBounds().top + pokerTableGraphic->getLocalBounds().height*0.3);
 				sf::Texture *cardTexture = new sf::Texture();
 				cardTexture->loadFromFile(GetCardTexture(cards_table.at(c)));
@@ -333,6 +337,7 @@ namespace GameMenus {
 				lastCard = tableCard;
 			}
 		}
+		pokerGame.drawings_sfml.push_back(jackPotTotal);
 		return pokerGame;
 	}
 
