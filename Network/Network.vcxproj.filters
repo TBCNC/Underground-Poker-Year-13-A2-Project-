@@ -87,6 +87,9 @@
     <ClInclude Include="UserServers.h">
       <Filter>Header Files\SQL\User</Filter>
     </ClInclude>
+    <ClInclude Include="ELOServer.h">
+      <Filter>Header Files\Networking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Server.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="UserServers.cpp">
       <Filter>Source Files\SQL\User</Filter>
+    </ClCompile>
+    <ClCompile Include="ELOServer.cpp">
+      <Filter>Source Files\Networking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

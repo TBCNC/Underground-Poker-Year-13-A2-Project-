@@ -24,6 +24,7 @@
     <ClInclude Include="DBConnection.h" />
     <ClInclude Include="Dealer.h" />
     <ClInclude Include="ELORanker.h" />
+    <ClInclude Include="ELOServer.h" />
     <ClInclude Include="PacketHandler.h" />
     <ClInclude Include="PacketType.h" />
     <ClInclude Include="PasswordHash.h" />
@@ -38,6 +39,7 @@
     <ClCompile Include="DBConnection.cpp" />
     <ClCompile Include="Dealer.cpp" />
     <ClCompile Include="ELORanker.cpp" />
+    <ClCompile Include="ELOServer.cpp" />
     <ClCompile Include="PacketHandler.cpp" />
     <ClCompile Include="PasswordHash.cpp" />
     <ClCompile Include="Player.cpp" />
