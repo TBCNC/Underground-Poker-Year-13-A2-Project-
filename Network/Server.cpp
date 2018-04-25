@@ -162,6 +162,10 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 			std::cout << "The winner is " << playingGame.at(currentTurnIndex-1).player.user.username.toAnsiString() << std::endl;
 			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex-1).player.user.username.toAnsiString());
 			SendToAll(winnerPacket);
+			sf::sleep(sf::seconds(3));
+			std::cout << "Starting new game..." << std::endl;
+			ResetPlayers();
+			StartGame();
 		}
 	}
 	else if (type == PacketType::MOVE_CALL) {
@@ -179,6 +183,10 @@ void Server::ProcessPacket(PacketHandler packet,int sourceIndex) {
 			std::cout << "The winner is " << this->winner.player.user.username.toAnsiString() << std::endl;
 			PacketHandler winnerPacket(PacketType::SERVER_MESSAGE, "Round over! The winner of this round is " + playingGame.at(currentTurnIndex - 1).player.user.username.toAnsiString());
 			SendToAll(winnerPacket);
+			sf::sleep(sf::seconds(3));
+			std::cout << "Starting new game..." << std::endl;
+			ResetPlayers();
+			StartGame();
 		}
 	}
 }
@@ -187,5 +195,13 @@ void Server::SendToAll(PacketHandler packet, Connection exclusion) {
 		if (connectedClients.at(c).socket != exclusion.socket) {
 			packet.SendPacket(connectedClients.at(c).socket);
 		}
+	}
+}
+void Server::ResetPlayers() {
+	this->playingGame.clear();
+	this->tableCards.cards.clear();
+	for (int c = 0; c < connectedClients.size(); c++) {
+		this->playingGame.push_back(connectedClients.at(c));
+		this->connectedClients.at(c).player.hand.cards.clear();
 	}
 }

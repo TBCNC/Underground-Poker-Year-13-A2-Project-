@@ -37,6 +37,7 @@ public:
 	int currentPlayers = 0;
 	void AddToDB();
 	void StartGame();
+	void ResetPlayers();
 	bool NextTurn();
 	void PerformFold(Player *player);
 	void PerformCall(Player *player, int callAmount);

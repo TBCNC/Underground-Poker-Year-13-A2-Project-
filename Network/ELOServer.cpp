@@ -116,10 +116,7 @@ void ELOServer::UpdateRankAverage(Game *game)
 		game->averageRank += ((game->players.at(c).player.eloRank) / game->players.size());
 	}
 }
-void ELOServer::CheckForStarts()
-{
-}
-void ELOServer::RemoveFromGame(Connection conn)
+void ELOServer::RemoveFromGame(ELOConnection conn)
 {
 	for (int c = 0; c < this->games.size(); c++) {
 		auto allPlayers = this->games.at(c).players;
@@ -138,7 +135,7 @@ void ELOServer::ProcessPacket(PacketHandler packet, int sourceIndex)
 	if (packet.type == PacketType::ACCOUNT_EXCHANGE) {
 		std::cout << "A connection is sending information." << std::endl;
 		UserAccount playerAccount(stoi(packet.payload), true);
-		Connection newConnection;
+		ELOConnection newConnection;
 		newConnection.player = Player(playerAccount);
 		newConnection.socket = this->tempConnections.at(sourceIndex);
 		this->tempConnections.erase(this->tempConnections.begin() + sourceIndex);

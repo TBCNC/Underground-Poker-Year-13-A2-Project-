@@ -52,7 +52,7 @@ void ScreenManagement::HandleTGUIEvents()
 				AddMenu(serverCreationMenu);
 				currentMenu = MenuTypes::SERVER_SETUP;
 			}
-			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Please fill in all fields!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "Please make your password longer!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "This user already exists!") {
+			else if (TGUIEventHandler::events.at(c)->arguments.at(0) == "Please fill in all fields!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "Please make your password longer!" || TGUIEventHandler::events.at(c)->arguments.at(0) == "This user already exists!" || TGUIEventHandler::events.at(c)->arguments.at(0)=="You have not entered a valid email address!") {
 				MenuStructure mainMenu = GameMenus::CreateAccountMenu(this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 				AddMenu(mainMenu);
 				currentMenu = MenuTypes::CREATE_ACCOUNT_MENU;
@@ -130,6 +130,13 @@ void ScreenManagement::HandleTGUIEvents()
 					//password not secure enough
 					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
 					auto msgbox = GameMenus::MessageBox("Please make your password longer!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
+					AddMenu(msgbox);
+					this->currentMenu = MenuTypes::MESSAGE_BOX;
+					break;
+				}
+				else if (email.find("@") == std::string::npos || email.find(".com")==std::string::npos) {
+					RemoveMenu(TGUIEventHandler::events.at(c)->menu);
+					auto msgbox = GameMenus::MessageBox("You have not entered a valid email address!", GameMenus::MessageType::ERROR, GameMenus::BoxType::OK, this->window_sfml->getSize().x, this->window_sfml->getSize().y);
 					AddMenu(msgbox);
 					this->currentMenu = MenuTypes::MESSAGE_BOX;
 					break;

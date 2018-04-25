@@ -10,6 +10,7 @@ double ELORanker::CalculateExpectedScore() {
 		double power = (this->enemy_players.at(c)->eloRank - this->our_player->eloRank);
 		expected_score += (1 / (1 + pow(10,power/400)));
 	}
+	std::cout << "Expected score is:" << expected_score << std::endl;
 	return expected_score;
 }
 double ELORanker::CalculatELORank(double final_score){

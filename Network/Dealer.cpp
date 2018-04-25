@@ -26,9 +26,8 @@ void Dealer::DealCard(Hand *hand) {
 }
 Hand Dealer::GeneratePack(){
   Hand deck;
-  int roundCounter=1;
   for(int i=0; i<4;i++){
-    for(int c=1; c<=(int)cardSize/4;c++){
+    for(int c=1; c<=13;c++){
       Card newCard;
       newCard.card_suit=(Suit)i;
       newCard.card_value=(Value)c;
@@ -36,7 +35,11 @@ Hand Dealer::GeneratePack(){
     }
   }
   deck=this->Shuffle(deck);
-  return deck;
+  Hand returnDeck;
+  for (int c = 0; c < this->cardSize; c++) {
+	  returnDeck.cards.push_back(deck.cards.at(c));
+  }
+  return returnDeck;
 }
 Hand Dealer::Shuffle(Hand toShuffle){
   srand(unsigned(std::time(0)));

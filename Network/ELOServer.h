@@ -13,8 +13,8 @@
 
 using namespace sf;
 
-struct Connection {
-	Connection() :player(Player(UserAccount(0))) {
+struct ELOConnection {
+	ELOConnection() :player(Player(UserAccount(0))) {
 
 	}
 	TcpSocket* socket;
@@ -22,7 +22,7 @@ struct Connection {
 	int gameIndex = -1;
 };
 struct Game {
-	std::vector<Connection> players;
+	std::vector<ELOConnection> players;
 	float averageRank;
 };
 class ELOServer {
@@ -32,7 +32,7 @@ public:
 	~ELOServer();
 	void Start();
 private:
-	void RemoveFromGame(Connection conn);
+	void RemoveFromGame(ELOConnection conn);
 	void ProcessPacket(PacketHandler packet, int sourceIndex);
 	void GameCalculations();
 	void UpdateRankAverage(Game *game);
@@ -42,7 +42,7 @@ private:
 	int portNumber;
 	std::vector<Game> games;
 	std::vector<int> usedPorts;
-	std::vector<Connection> allConnections;
+	std::vector<ELOConnection> allConnections;
 	std::vector<TcpSocket*> tempConnections;
 	bool serverOnline;
 };
